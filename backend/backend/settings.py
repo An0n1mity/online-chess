@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_',
-    'corsheaders'
+    'corsheaders',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,10 @@ CORS_ORIGIN_WHITELIST = ("http://localhost:3000",
 CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
 ]
+
+ASGI_APPLICATION = 'backend.routing.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
