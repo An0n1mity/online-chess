@@ -1,0 +1,16 @@
+#player-info-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 35%;
+}
+
+.player-username {
+	font-size: 1.5em;
+	color: #ffffff;
+}
+
+.player-rating{
+	font-size: 1.5em;
+	color: #ffffff;
+}
