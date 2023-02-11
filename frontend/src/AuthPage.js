@@ -5,15 +5,17 @@ class AuthPage extends Component {
   constructor(props){
     super(props)
     this.state = {
-      username: '',
-      email: '',
-      password: '',
-      currentView: "signUp"
+	username: '',
+	email: '',
+	password: '',
+	currentView: "logIn",
+	errorMessage: ''
     }
+    this.handleChange = this.handleChange.bind(this)
   }
 
   handleChange = (e) => {
-      this.setState({ [e.target.name]: e.target.value })
+      this.setState({ [e.target.id]: e.target.value })
   }
 
   handleSubmit = (event) => {
@@ -21,23 +23,36 @@ class AuthPage extends Component {
 
     const { username, email, password } = this.state;
     if (this.state.currentView === "signUp") {
-	axios.post('http://localhost:3001/auth/signup', {
+	console.log(username, email, password)
+	axios.post('http://localhost:8000/auth/register/', {
 	    username: username,
 	    email: email,
 	    password: password,
 	    })
-	  .then(response => { console.log(response) })
-	  .catch(error => { console.log(error) });
+	  .then(response => {
+	      if (response.data.success) {
+		  console.log(response.data)
+	      }
+	      else{
+		  this.setState({errorMessage: response.data.error})
+	      }
+	  })
     }
     else if (this.state.currentView === "logIn") {
-	axios.post('http://localhost:3001/auth/login', {
+	axios.post('http://localhost:8000/auth/login', {
 	    username: username,
 	    password: password,
 	    })
-	  .then(response => { console.log(response) })
-	  .catch(error => { console.log(error) });
-	  }
+	    .then(response => {
+	      if (response.data.success) {
+		  console.log(response.data)
+	      }
+	      else{
+		  this.setState({errorMessage: response.data.error})
+	      }
+	  })
     }
+  }
 
   changeView = (view) => {
     this.setState({
@@ -69,13 +84,13 @@ class AuthPage extends Component {
             </fieldset>
             <button>Sign Up</button>
             <button type="button" onClick={ () => this.changeView("logIn")}>Have an Account?</button>
+	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>
         )
-        break
       case "logIn":
         return (
           <form onSubmit={this.handleSubmit}>
-            <h2>Welcome Back!</h2>
+            <h2>Online-Chess ♟️</h2>
             <fieldset>
               <legend>Log In</legend>
               <ul>
@@ -95,9 +110,10 @@ class AuthPage extends Component {
             </fieldset>
             <button onClick={() => this.handleSubmit}>Submit</button>
             <button type="button" onClick={ () => this.changeView("signUp")}>Create an Account</button>
+	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
+
           </form>
         )
-        break
       case "PWReset":
         return (
           <form>
