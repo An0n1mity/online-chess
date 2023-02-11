@@ -8,4 +8,14 @@ class Game(models.Model):
    created_at = models.DateTimeField(auto_now_add=True)
    updated_at = models.DateTimeField(auto_now=True)
 
-# Create your models here.
+class User(models.Model):
+   username = models.CharField(
+           max_length=255
+           unique=True
+           )
+   email = models.CharField(
+           max_length=255
+           unique=True
+           )
+   password = models.CharField(max_length=255)
+ # Create your models here.

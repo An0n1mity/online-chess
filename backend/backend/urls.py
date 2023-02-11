@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from test_ import views 
+from rest_framework_simplejwt.views import views as jwt_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/make_move/', views.make_move, name='make_move'),
+    path('auth/register/', views.register, name='register'),
 ]
