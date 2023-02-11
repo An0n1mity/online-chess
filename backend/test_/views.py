@@ -6,6 +6,8 @@ from . import chess_logic
 
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 @csrf_exempt
 def create_board(request):
@@ -33,15 +35,20 @@ def register(request):
         data = json.loads(request.body)
         username = data.get('username')
         email = data.get('email')
-        password = data.get('password') 
+        password = data.get('password')
         if User.objects.filter(username=username).exists():
             return JsonResponse({'error': 'Username already exists'})
         elif User.objects.filter(email=email).exists():
             return JsonResponse({'error': 'Email already exists'})
+        
         else:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-            return JsonResponse({'success': 'User created successfully'})
+            try:
+                validate_password(password) 
+                user = User.objects.create_user(username, email, password)          
+                user.save()
+                return JsonResponse({'success': 'User created successfully'})
+            except ValidationError as e:
+                return JsonResponse({'error': str(e).replace('[', '').replace(']', '').replace("'", '').split(',')[0]})
 
 @csrf_exempt
 def login(request):
@@ -49,7 +56,6 @@ def login(request):
         data = json.loads(request.body)
         username = data.get('username')
         password = data.get('password')
-       
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
