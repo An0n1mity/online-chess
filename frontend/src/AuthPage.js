@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import axios from 'axios';
+import PasswordStrengthBar from 'react-password-strength-bar';
+import zxcvbn from 'zxcvbn';
 
 class AuthPage extends Component {
   constructor(props){
@@ -9,7 +11,7 @@ class AuthPage extends Component {
 	email: '',
 	password: '',
 	currentView: "logIn",
-	errorMessage: ''
+	errorMessage: '',
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -17,13 +19,18 @@ class AuthPage extends Component {
   handleChange = (e) => {
       this.setState({ [e.target.id]: e.target.value })
   }
-
+    
   handleSubmit = (event) => {
     event.preventDefault();
 
     const { username, email, password } = this.state;
     if (this.state.currentView === "signUp") {
-	console.log(username, email, password)
+	// Check if password is strong enough
+	if(zxcvbn(password).score < 3) {
+	    this.setState({ errorMessage: "Password is not strong enough" })
+	    return
+	}
+	    
 	axios.post('http://localhost:8000/auth/register/', {
 	    username: username,
 	    email: email,
@@ -31,7 +38,7 @@ class AuthPage extends Component {
 	    })
 	  .then(response => {
 	      if (response.data.success) {
-		  console.log(response.data)
+		  this.setState({ currentView: "logIn" })
 	      }
 	      else{
 		  this.setState({errorMessage: response.data.error})
@@ -79,7 +86,10 @@ class AuthPage extends Component {
                 </li>
                 <li>
                   <label for="password">Password:</label>
-                  <input type="password" id="password" onChange={this.handleChange} required/>              </li>
+                  <input type="password" id="password" onChange={this.handleChange} required/>              
+		<PasswordStrengthBar password={this.state.password} />
+	    </li>
+
               </ul>
             </fieldset>
             <button>Sign Up</button>
