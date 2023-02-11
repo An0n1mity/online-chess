@@ -1,0 +1,70 @@
+* {
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+    background:linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    animation: Gradient 1s ease infinite;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 400px;
+  margin: auto;
+  margin-top: 50px;
+}
+
+form h2 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 100;
+  margin-bottom: 20px;
+}
+
+form input, form button {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+form button {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+form button:hover {
+  background-color: #eef;
+  border: 1px solid #aaf;
+  cursor: pointer;
+}
+
+form ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%
+  }
+  50% {
+    background-position: 100% 50%
+  }
+  100% {
+    background-position: 0% 50%
+  }
+}

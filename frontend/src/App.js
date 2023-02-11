@@ -2,11 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 import './Board.css';
 import './Player.css';
+import './AuthPage.css';
 import React, {Component} from 'react';
 import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { EvalBar} from "chess-evaluation-bar";
-
+import AuthPage from './AuthPage';
 // Component to contain the chessboard 
 
 const handleMove = (move) => {
@@ -169,11 +170,14 @@ let player_ = {username: "Player", rating: 2000, country: "USA", color: "black"}
 let opponent_ = {username: "Opponent", rating: 2000, country: "USA", color: "white"};
 class App extends Component {
     render() {
-      return (
+      /*return (
 	<div className="App">
 	    <Game_container player={player_} opponent={opponent_} evaluation={{white: 50, black: 50}}/>
 	</div>
-      );
+      );*/
+	return (
+	    <AuthPage/>
+	);
     }
 }
 
