@@ -22,7 +22,7 @@ class AuthPage extends Component {
     
   handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log("Sumbit")
     const { username, email, password } = this.state;
     if (this.state.currentView === "signUp") {
 	// Check if password is strong enough
@@ -57,16 +57,36 @@ class AuthPage extends Component {
 	    .then(response => {
 	      if (response.data.success) {
 		  console.log(response.data)
+		  // Store the token in local storage
+		  localStorage.setItem('token', response.data.token);
+		  // Set token to the axios header
+		  axios.defaults.headers.common['Authorization'] = 'Token ' + response.data.token;
 	      }
 	      else{
 		  this.setState({errorMessage: response.data.error})
 	      }
 	  })
     }
+    else if (this.state.currentView === "PWReset") {
+	console.log("in")
+	axios.post('http://localhost:8000/auth/reset', {
+	    email: email, 
+	    })
+	    .then(response => {
+	      if (response.data.success) {
+		  console.log(response.data)
+	      }
+	      else{
+		  this.setState({errorMessage: response.data.error})
+	      }
+	  })
+
+    }
   }
 
   changeView = (view) => {
     this.setState({
+      password: '',
       currentView: view
     })
   }
@@ -130,7 +150,7 @@ class AuthPage extends Component {
         )
       case "PWReset":
         return (
-          <form>
+          <form onSubmit={this.handleSubmit}>
           <h2>Reset Password</h2>
           <fieldset>
             <legend>Password Reset</legend>
@@ -140,12 +160,17 @@ class AuthPage extends Component {
               </li>
               <li>
                 <label for="email">Email:</label>
-                <input type="email" id="email" required/>
+                <input type="email" id="email" onChange={this.handleChange}/>
               </li>
             </ul>
           </fieldset>
+<<<<<<< HEAD
           <button>Send Reset Link</button>
           <button type="button" onClick={this.changeView("logIn")}>Go Back</button>
+=======
+          <button onClick={() => this.handleSubmit} >Send Reset Link</button>
+          <button type="button" onClick={() => this.changeView("logIn")}>Go Back</button>
+>>>>>>> 543edd2 (React routing added)
         </form>
         )
       default:
