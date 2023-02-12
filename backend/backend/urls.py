@@ -17,6 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from test_ import views 
 
+from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/make_move/', views.make_move, name='make_move'),

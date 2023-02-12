@@ -5,9 +5,12 @@ import json
 from . import chess_logic
 
 from django.contrib.auth.models import User
+import django.contrib.auth as auth
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @csrf_exempt
 def create_board(request):
@@ -59,7 +62,9 @@ def login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            return JsonResponse({'success': 'Logged in'})
+            auth.login(request, user)
+            refresh = RefreshToken.for_user(user)
+            return JsonResponse({'success': 'Logged in', 'refresh': str(refresh), 'access': str(refresh.access_token)})
         else:
             return JsonResponse({'error': 'Username or password invalids'})
 

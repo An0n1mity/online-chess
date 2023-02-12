@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'test_',
     'corsheaders',
+    'rest_framework_simplejwt',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -91,6 +93,8 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
+AUTH_USER_MODEL = 'test_.User'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -135,4 +139,15 @@ CORS_ORIGIN_WHITELIST = ("http://localhost:3000",
 CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
 ]
+
+# REST FRAMEWORK
+REST_FRAMEWORK = {
+        # Any view that uses DRF will automatically use the DjangoFilterBackend to filter the queryset
+        # Any view that uses DRF will automatically use JSON Web Tokens (JWT) for authentication. This allows the API to verify the authenticity of requests and ensures that only authorized users can access the protected resources
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework.authentication.SessionAuthentication',
+            ],
+        }
+
+
 
