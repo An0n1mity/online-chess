@@ -31,10 +31,12 @@ class AuthPage extends Component {
 	    return
 	}
 	    
-	axios.post('http://localhost:8000/auth/register/', {
-	    username: username,
-	    email: email,
-	    password: password,
+	axios.post('http://localhost:8000/api/register', {
+	    user:{
+		username: username,
+		email: email,
+		password: password
+	    }
 	    })
 	  .then(response => {
 	      if (response.data.success) {

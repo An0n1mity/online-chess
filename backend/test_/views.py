@@ -4,13 +4,20 @@ from django.views.decorators.csrf import csrf_exempt
 import json 
 from . import chess_logic
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 import django.contrib.auth as auth
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from .models import User
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from .serializers import RegistrationSerializer
+from rest_framework.response import Response
+
 
 @csrf_exempt
 def create_board(request):
@@ -68,4 +75,18 @@ def login(request):
         else:
             return JsonResponse({'error': 'Username or password invalids'})
 
+class RegistrationAPIView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = RegistrationSerializer
 
+    def post(self, request):
+        user = request.data.get('user', {})
+        # Check if the mail or the username already exists 
+        if User.objects.filter(username=user.get('username')).exists() or User.objects.filter(email=user.get('email')).exists():
+            return JsonResponse({'error': 'Username or email already exists'})
+        else:
+            serializer = RegistrationSerializer(data=user)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

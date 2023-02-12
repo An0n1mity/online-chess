@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from test_ import views 
+from test_.views import *
 
 from rest_framework import routers
 from rest_framework_simplejwt.views import (
@@ -23,9 +23,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+print(type(RegistrationAPIView))
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/make_move/', views.make_move, name='make_move'),
-    path('auth/register/', views.register, name='register'),
-    path('auth/login', views.login, name='login'),
+    path('api/make_move/', make_move, name='make_move'),
+    path('api/register', RegistrationAPIView.as_view(), name='register'),
+    path('auth/register/', register, name='register'),
+    path('auth/login', login, name='login'),
 ]
