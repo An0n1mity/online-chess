@@ -164,13 +164,8 @@ class AuthPage extends Component {
               </li>
             </ul>
           </fieldset>
-<<<<<<< HEAD
-          <button>Send Reset Link</button>
-          <button type="button" onClick={this.changeView("logIn")}>Go Back</button>
-=======
           <button onClick={() => this.handleSubmit} >Send Reset Link</button>
           <button type="button" onClick={() => this.changeView("logIn")}>Go Back</button>
->>>>>>> 543edd2 (React routing added)
         </form>
         )
       default:
