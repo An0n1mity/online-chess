@@ -46,8 +46,9 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         # Client can send either username or email to log in
         username = data.get('username', None)
-        email = User.objects.get(username=username).email
-        if not email:
+        try:
+            email = User.objects.get(username=username).email
+        except:
             email = username
         password = data.get('password', None)
 
