@@ -48,9 +48,11 @@ class AuthPage extends Component {
 	  })
     }
     else if (this.state.currentView === "logIn") {
-	axios.post('http://localhost:8000/auth/login', {
-	    username: username,
-	    password: password,
+	axios.post('http://localhost:8000/api/login', {
+	    user:{
+		username: username,
+		password: password
+	    }
 	    })
 	    .then(response => {
 	      if (response.data.success) {

@@ -23,12 +23,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-print(type(RegistrationAPIView))
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/make_move/', make_move, name='make_move'),
     path('api/register', RegistrationAPIView.as_view(), name='register'),
-    path('auth/register/', register, name='register'),
-    path('auth/login', login, name='login'),
+    path('api/login', LoginAPIView.as_view(), name='login'),
 ]
