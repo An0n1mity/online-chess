@@ -83,7 +83,7 @@ class RegistrationAPIView(APIView):
         user = request.data.get('user', {})
         # Check if the mail or the username already exists 
         if User.objects.filter(username=user.get('username')).exists() or User.objects.filter(email=user.get('email')).exists():
-            return JsonResponse({'error': 'Username or email already exists'})
+            return Response({'error': 'Username or email already exists'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = RegistrationSerializer(data=user)
             serializer.is_valid(raise_exception=True)
