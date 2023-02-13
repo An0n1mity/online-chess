@@ -51,7 +51,7 @@ class AuthPage extends Component {
 	axios.post('http://localhost:8000/api/login', {
 	    user:{
 		username: username,
-		password: password,
+		password: password
 	    }
 	    })
 	    .then(response => {
