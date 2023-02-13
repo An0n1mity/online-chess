@@ -97,7 +97,7 @@ class AuthPage extends Component {
               </ul>
             </fieldset>
             <button>Sign Up</button>
-            <button type="button" onClick={ () => this.changeView("logIn")}>Have an Account?</button>
+            <button type="button" onClick={this.changeView("logIn")}>Have an Account?</button>
 	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>
         )
@@ -118,12 +118,12 @@ class AuthPage extends Component {
                 </li>
                 <li>
                   <i/>
-                  <a onClick={ () => this.changeView("PWReset")} href="#">Forgot Password?</a>
+                  <a onClick={this.changeView("PWReset")} href="#">Forgot Password?</a>
                 </li>
               </ul>
             </fieldset>
-            <button onClick={() => this.handleSubmit}>Submit</button>
-            <button type="button" onClick={ () => this.changeView("signUp")}>Create an Account</button>
+            <button onClick={this.handleSubmit}>Submit</button>
+            <button type="button" onClick={ this.changeView("signUp")}>Create an Account</button>
 	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
 
           </form>
@@ -145,7 +145,7 @@ class AuthPage extends Component {
             </ul>
           </fieldset>
           <button>Send Reset Link</button>
-          <button type="button" onClick={ () => this.changeView("logIn")}>Go Back</button>
+          <button type="button" onClick={this.changeView("logIn")}>Go Back</button>
         </form>
         )
       default:
