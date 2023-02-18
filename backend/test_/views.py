@@ -19,62 +19,6 @@ from .serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.response import Response
 
 
-@csrf_exempt
-def create_board(request):
-    if request.method == 'POST':
-        board = chess_logic.createBoard()
-        fen = chess_logic.boardToFen(board)
-        return JsonResponse({'fen': fen})
-    else:
-        return JsonResponse({'error': 'Invalid request type'})
-
-@csrf_exempt
-def make_move(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        if "move" in data:
-            move = data.get("move")
-            return JsonResponse({'move': move})
-
-    return JsonResponse({'error': 'Invalid request'})
-
-# Register a new users and save it to the database
-@csrf_exempt
-def register(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists'})
-        elif User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Email already exists'})
-        
-        else:
-            try:
-                validate_password(password) 
-                user = User.objects.create_user(username, email, password)          
-                user.save()
-                return JsonResponse({'success': 'User created successfully'})
-            except ValidationError as e:
-                return JsonResponse({'error': str(e).replace('[', '').replace(']', '').replace("'", '').split(',')[0]})
-
-@csrf_exempt
-def login(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            auth.login(request, user)
-            refresh = RefreshToken.for_user(user)
-            return JsonResponse({'success': 'Logged in', 'refresh': str(refresh), 'access': str(refresh.access_token)})
-        else:
-            return JsonResponse({'error': 'Username or password invalids'})
-
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
@@ -82,23 +26,47 @@ class RegistrationAPIView(APIView):
     def post(self, request):
         user = request.data.get('user', {})
         # Check if the mail or the username already exists 
-        if User.objects.filter(username=user.get('username')).exists() or User.objects.filter(email=user.get('email')).exists():
-            return Response({'error': 'Username or email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer = RegistrationSerializer(data=user)
+        serializer = RegistrationSerializer(data=user)
+        try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            # Check if serialize errors are related to the username or the email 
+            try:
+                if serializer.errors['username'][0].code == 'unique':
+                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass 
+            try:
+                if serializer.errors['email'][0].code == 'unique':
+                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+           # Check if serialize errors are related to the password 
+            try:    
+                if serializer.errors['password'][0].code == 'password_too_common':
+                    return Response({'error': 'Password is too common'}, status=status.HTTP_400_BAD_REQUEST)
+                elif serializer.errors['password'][0].code == 'password_too_short':
+                    return Response({'error': 'Password is too short'}, status=status.HTTP_400_BAD_REQUEST)
+                elif serializer.errors['password'][0].code == 'password_too_similar':
+                    return Response({'error': 'Password is too similar to the username'}, status=status.HTTP_400_BAD_REQUEST)
+                elif serializer.errors['password'][0].code == 'password_entirely_numeric':
+                    return Response({'error': 'Password is entirely numeric'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+            
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
     def post(self, request):
         user = request.data.get('user', {})
-        print(user)
         serializer = LoginSerializer(data=user)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Bad credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)

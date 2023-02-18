@@ -13,6 +13,14 @@ In summary, the "goal" of a serializer in Django is its ability to handle data s
 """
 
 """Serializers registration requests and creates a new user."""
+
+def validate_password(password):
+    if len(password) < 8:
+        raise serializers.ValidationError("Password must be at least 8 characters long")
+    if password.isdigit():
+        raise serializers.ValidationError("Password must contain at least one letter")
+    return password
+
 class RegistrationSerializer(serializers.ModelSerializer):
         # Ensure passwords are at least 8 characters long, no longer than 128
     # characters, and can not be read by the client.
@@ -20,7 +28,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         max_length=128,
         min_length=8,
         # Don't send the password in the response
-        write_only=True
+        write_only=True,
+        validators=[validate_password]
     )
 
     # The client should not be able to send a token along with a registration
@@ -32,11 +41,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         # List all of the fields that could possibly be included in a request
         # or response, including fields specified explicitly above.
         fields = ['email', 'username', 'password', 'token']
+        validators = []
 
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
         return User.objects.create_user(**validated_data)
-
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
@@ -56,7 +65,7 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(email=email, password=password)
 
         if user is None:
-            raise serializers.ValidationError('A user with this email and password is not found.')
+            raise serializers.ValidationError('A user with this username/email and password is not found.')
 
         if not user.is_active:
             raise serializers.ValidationError('This user has been deactivated.')
