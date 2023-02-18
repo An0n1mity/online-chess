@@ -38,14 +38,13 @@ class AuthPage extends Component {
 		password: password
 	    }
 	    })
-	  .then(response => {
-	      if (response.data.success) {
-		  this.setState({ currentView: "logIn" })
-	      }
-	      else{
-		  this.setState({errorMessage: response.data.error})
-	      }
-	  })
+	    .then(response => {
+		console.log(response)
+	    })
+	    .catch(error => {
+	      console.log(error.response.data.error)
+	      this.setState({ errorMessage: error.response.data.error })
+	  });
     }
     else if (this.state.currentView === "logIn") {
 	axios.post('http://localhost:8000/api/login', {
@@ -55,39 +54,32 @@ class AuthPage extends Component {
 	    }
 	    })
 	    .then(response => {
-	      if (response.data.success) {
-		  console.log(response.data)
-		  // Store the token in local storage
-		  localStorage.setItem('token', response.data.token);
-		  // Set token to the axios header
-		  axios.defaults.headers.common['Authorization'] = 'Token ' + response.data.token;
-	      }
-	      else{
-		  this.setState({errorMessage: response.data.error})
-	      }
-	  })
+		console.log(response)
+	    })
+	    .catch(error => {
+		console.log(error.response.data.error)
+		this.setState({ errorMessage: error.response.data.error })
+	    })
+
     }
     else if (this.state.currentView === "PWReset") {
-	console.log("in")
 	axios.post('http://localhost:8000/auth/reset', {
 	    email: email, 
 	    })
 	    .then(response => {
-	      if (response.data.success) {
-		  console.log(response.data)
-	      }
-	      else{
-		  this.setState({errorMessage: response.data.error})
-	      }
-	  })
-
+		console.log(response)
+	    })
+	    .catch(error => {
+		console.log(error.response.data.error)
+		this.setState({ errorMessage: error.response.data.error })
+	    })
     }
   }
 
   changeView = (view) => {
-    this.setState({
+      this.setState({
       password: '',
-      currentView: view
+      currentView: view,
     })
   }
 
@@ -109,16 +101,15 @@ class AuthPage extends Component {
                   <input type="email" id="email" onChange={this.handleChange} required/>
                 </li>
                 <li>
-                  <label for="password">Password:</label>
-                  <input type="password" id="password" onChange={this.handleChange} required/>              
-		<PasswordStrengthBar password={this.state.password} />
-	    </li>
-
+		    <label for="password">Password:</label>
+		    <input type="password" id="password" onChange={this.handleChange} required/>              
+		    <PasswordStrengthBar password={this.state.password} />
+		</li>
               </ul>
             </fieldset>
-            <button>Sign Up</button>
-            <button type="button" onClick={this.changeView("logIn")}>Have an Account?</button>
-	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
+		<button>Sign Up</button>
+		<button type="button" onClick={() => this.changeView("logIn")}>Have an Account?</button>
+		{this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>
         )
       case "logIn":
@@ -137,15 +128,13 @@ class AuthPage extends Component {
                   <input type="password" id="password" onChange={this.handleChange} required/>
                 </li>
                 <li>
-                  <i/>
-                  <a onClick={this.changeView("PWReset")} href="#">Forgot Password?</a>
+                  <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>
                 </li>
               </ul>
             </fieldset>
             <button onClick={this.handleSubmit}>Submit</button>
-            <button type="button" onClick={ this.changeView("signUp")}>Create an Account</button>
+            <button type="button" onClick={() => this.changeView("signUp")}>Create an Account</button>
 	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
-
           </form>
         )
       case "PWReset":
