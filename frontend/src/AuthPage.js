@@ -23,7 +23,7 @@ class AuthPage extends Component {
     
   handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log("Sumbit")
     const { username, email, password } = this.state;
     if (this.state.currentView === "signUp") {
 	// Check if password is strong enough
@@ -39,14 +39,13 @@ class AuthPage extends Component {
 		password: password
 	    }
 	    })
-	  .then(response => {
-	      if (response.data.success) {
-		  this.setState({ currentView: "logIn" })
-	      }
-	      else{
-		  this.setState({errorMessage: response.data.error})
-	      }
-	  })
+	    .then(response => {
+		console.log(response)
+	    })
+	    .catch(error => {
+	      console.log(error.response.data.error)
+	      this.setState({ errorMessage: error.response.data.error })
+	  });
     }
     else if (this.state.currentView === "logIn") {
 	axios.post('http://localhost:8000/api/login', {
@@ -56,19 +55,32 @@ class AuthPage extends Component {
 	    }
 	    })
 	    .then(response => {
-	      if (response.data.success) {
-		  console.log(response.data)
-	      }
-	      else{
-		  this.setState({errorMessage: response.data.error})
-	      }
-	  })
+		console.log(response)
+	    })
+	    .catch(error => {
+		console.log(error.response.data.error)
+		this.setState({ errorMessage: error.response.data.error })
+	    })
+
+    }
+    else if (this.state.currentView === "PWReset") {
+	axios.post('http://localhost:8000/auth/reset', {
+	    email: email, 
+	    })
+	    .then(response => {
+		console.log(response)
+	    })
+	    .catch(error => {
+		console.log(error.response.data.error)
+		this.setState({ errorMessage: error.response.data.error })
+	    })
     }
   }
 
   changeView = (view) => {
-    this.setState({
-      currentView: view
+      this.setState({
+      password: '',
+      currentView: view,
     })
   }
 
@@ -90,16 +102,15 @@ class AuthPage extends Component {
                   <input type="email" id="email" onChange={this.handleChange} required/>
                 </li>
                 <li>
-                  <label for="password">Password:</label>
-                  <input type="password" id="password" onChange={this.handleChange} required/>              
-		<PasswordStrengthBar password={this.state.password} />
-	    </li>
-
+		    <label for="password">Password:</label>
+		    <input type="password" id="password" onChange={this.handleChange} required/>              
+		    <PasswordStrengthBar password={this.state.password} />
+		</li>
               </ul>
             </fieldset>
-            <button>Sign Up</button>
-            <button type="button" onClick={ () => this.changeView("logIn")}>Have an Account?</button>
-	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
+		<button>Sign Up</button>
+		<button type="button" onClick={() => this.changeView("logIn")}>Have an Account?</button>
+		{this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>
         )
       case "logIn":
@@ -118,20 +129,18 @@ class AuthPage extends Component {
                   <input type="password" id="password" onChange={this.handleChange} required/>
                 </li>
                 <li>
-                  <i/>
-                  <a onClick={ () => this.changeView("PWReset")} href="#">Forgot Password?</a>
+                  <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>
                 </li>
               </ul>
             </fieldset>
-            <button onClick={() => this.handleSubmit}>Submit</button>
-            <button type="button" onClick={ () => this.changeView("signUp")}>Create an Account</button>
+            <button onClick={this.handleSubmit}>Submit</button>
+            <button type="button" onClick={() => this.changeView("signUp")}>Create an Account</button>
 	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
-
           </form>
         )
       case "PWReset":
         return (
-          <form>
+          <form onSubmit={this.handleSubmit}>
           <h2>Reset Password</h2>
           <fieldset>
             <legend>Password Reset</legend>
@@ -141,12 +150,12 @@ class AuthPage extends Component {
               </li>
               <li>
                 <label for="email">Email:</label>
-                <input type="email" id="email" required/>
+                <input type="email" id="email" onChange={this.handleChange}/>
               </li>
             </ul>
           </fieldset>
-          <button>Send Reset Link</button>
-          <button type="button" onClick={ () => this.changeView("logIn")}>Go Back</button>
+          <button onClick={() => this.handleSubmit} >Send Reset Link</button>
+          <button type="button" onClick={() => this.changeView("logIn")}>Go Back</button>
         </form>
         )
       default:

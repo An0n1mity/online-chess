@@ -8,6 +8,16 @@ import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { EvalBar} from "chess-evaluation-bar";
 import AuthPage from './AuthPage';
+
+
+// Routing 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
 // Component to contain the chessboard 
 
 const handleMove = (move) => {
@@ -168,17 +178,42 @@ function Game_container({player, opponent, evaluation}){
 // App contains the chessboard component 
 let player_ = {username: "Player", rating: 2000, country: "USA", color: "black"};
 let opponent_ = {username: "Opponent", rating: 2000, country: "USA", color: "white"};
-class App extends Component {
-    render() {
-      /*return (
+
+const App = () => {
+    const isAuthenticated = false;
+         /*return (
 	<div className="App">
 	    <Game_container player={player_} opponent={opponent_} evaluation={{white: 50, black: 50}}/>
 	</div>
       );*/
 	return (
-	    <AuthPage/>
+	    <Router>
+	        <Routes>
+		    <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
+		    <Route path="/login" element={<AuthPage/>}/>
+		    <Route path='/home' element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
+		</Routes>
+	    </Router>
 	);
-    }
 }
+
+const hasToken = () => {
+    const token = localStorage.getItem('token');
+    if (token){
+	return true;
+	}
+    else{
+	return false;
+	}
+};
+
+const AuthWrapper = ({isAuthenticated}) => {
+    hasToken() ? isAuthenticated = true : isAuthenticated = false;
+    return isAuthenticated ? (
+	<Navigate to="/home" replace />
+	) : (
+	<Navigate to="/login" replace />
+	);
+};
 
 export default App;
