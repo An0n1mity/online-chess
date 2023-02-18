@@ -53,22 +53,31 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
+
         # Client can send either username or email to log in
         username = data.get('username', None)
+        if username is None:
+            raise serializers.ValidationError(
+                    'error : A username is required to log in.'
+            )
         try:
             email = User.objects.get(username=username).email
         except:
             email = username
+    
         password = data.get('password', None)
-
+        if password is None:
+            raise serializers.ValidationError(
+                    'error :A password is required to log in.'
+            )
         # Try to authenticate the user
         user = authenticate(email=email, password=password)
 
         if user is None:
-            raise serializers.ValidationError('A user with this username/email and password is not found.')
+            raise serializers.ValidationError('error : A user with this username/email and password is not found.')
 
         if not user.is_active:
-            raise serializers.ValidationError('This user has been deactivated.')
+            raise serializers.ValidationError('error : This user has been deactivated.')
 
         return {
             "email": user.email,

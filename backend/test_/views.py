@@ -68,5 +68,28 @@ class LoginAPIView(APIView):
             serializer.is_valid(raise_exception=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
-            return Response({'error': 'Bad credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                # if username is empty 
+                if serializer.errors['username'][0].code == 'blank':
+                    return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+            try:
+                # if password is empty
+                if serializer.errors['password'][0].code == 'blank':
+                    return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+            try:
+                # if username is not found
+                if serializer.errors['non_field_errors'][0].code == 'invalid':
+                    return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+            try:
+                # if password is incorrect
+                if serializer.errors['non_field_errors'][0].code == 'invalid':
+                    return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
 
