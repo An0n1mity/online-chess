@@ -6,8 +6,7 @@
 
 body {
   height: 100vh;
-    background:linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
-    animation: Gradient 1s ease infinite;
+  background: url("signup-background.png");
 }
 
 form {
@@ -45,6 +44,15 @@ form button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+.signup-button {
+  background-color: #7f9264;
+  color: white;
+}
+
+.signup-button:hover {
+  background-color: #667550
+}
+
 form button:hover {
   background-color: #eef;
   border: 1px solid #aaf;
@@ -57,14 +65,3 @@ form ul {
   margin: 0;
 }
 
-@keyframes Gradient {
-  0% {
-    background-position: 0% 50%
-  }
-  50% {
-    background-position: 100% 50%
-  }
-  100% {
-    background-position: 0% 50%
-  }
-}

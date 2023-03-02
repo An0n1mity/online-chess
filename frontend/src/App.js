@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { EvalBar} from "chess-evaluation-bar";
 import AuthPage from './AuthPage';
-
+import Home from './Dashboard';
 
 // Routing 
 import {
@@ -189,8 +189,9 @@ const App = () => {
 	return (
 	    <Router>
 	        <Routes>
-		    <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
-		    <Route path="/login" element={<AuthPage/>}/>
+		    <Route path="/" element={<Home/>}/>
+		    <Route path="/login" element={<AuthPage currentView="logIn"/>}/>
+		    <Route path="/signup" element={<AuthPage currentView="signUp"/>}/>
 		    <Route path='/home' element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
 		</Routes>
 	    </Router>

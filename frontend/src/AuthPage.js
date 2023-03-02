@@ -3,6 +3,7 @@ import { Component } from 'react';
 import axios from 'axios';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import zxcvbn from 'zxcvbn';
+import signup_background from './signup-background.png';
 
 class AuthPage extends Component {
   constructor(props){
@@ -11,7 +12,7 @@ class AuthPage extends Component {
 	username: '',
 	email: '',
 	password: '',
-	currentView: "logIn",
+	currentView: props.currentView,
 	errorMessage: '',
     }
     this.handleChange = this.handleChange.bind(this)
@@ -108,7 +109,7 @@ class AuthPage extends Component {
 		</li>
               </ul>
             </fieldset>
-		<button>Sign Up</button>
+		<button className="signup-button">Sign Up</button>
 		<button type="button" onClick={() => this.changeView("logIn")}>Have an Account?</button>
 		{this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>

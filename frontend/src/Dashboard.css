@@ -1,0 +1,72 @@
+.home {
+    display: flex;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.navbar {
+  background-color: #272522;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 50px 1fr 50px;
+  width: 10%;
+}
+
+.navbar-logo a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.logo-img{
+  width: 100%;
+  height: 100%;
+}
+
+.navbar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.navbar-buttons button {
+  background-color: #272522;
+  color: #d6d6d6;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+}
+
+.navbar-buttons button:hover {
+  background-color: #1e1d1a;
+}
+
+.play-button-img {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+.navbar-buttons .signup-button {
+  background-color: #383633;
+  color: white;
+}
+
+.login-link, .signup-link {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.navbar-buttons .login-button {
+  background-color: #7fa650;
+  color: white;
+}
+
+.navbar-buttons .login-button:hover {
+  background-color: #9ed071;
+}
