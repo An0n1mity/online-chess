@@ -42,18 +42,18 @@ const OnlineGameBlock = () => {
 		<Link to="/play" style={{ textDecoration: 'none' }}>
 		    <button className="online-game-block-info-buttons-play-online">
 			<div className="online-game-block-info-buttons-play-online-img">
-			    <img className="online-play-button-img" src={require("./play-hand.png")} alt="play" />
+			    <icon className="online-game-block-info-online-icon">🌍</icon>
 			</div>
 			<div className="online-game-block-info-buttons-play-online-text">
 			    <h1 className="online-game-block-info-buttons-play-online-text-title">Play Online</h1>
-			    <h2 className="online-game-block-info-buttons-play-online-text-subtitle">Play with your friends or random players</h2>
+			    <h2 className="online-game-block-info-buttons-play-online-text-subtitle">Play against the world</h2>
 			</div>
 		    </button>
 		</Link>
 		<Link to="/play" style={{ textDecoration: 'none' }}>
 		    <button className="online-game-block-info-buttons-play-bots">
 			<div className="online-game-block-info-buttons-play-bots-img">
-			    <img className="online-play-button-img" src={require("./play-hand.png")} alt="play" />
+			    <icon className="online-game-block-info-bots-icon">🤖</icon>
 			</div>
 			<div className="online-game-block-info-buttons-play-bots-text">
 			    <h1 className="online-game-block-info-buttons-play-bots-text-title">Play Bots</h1>

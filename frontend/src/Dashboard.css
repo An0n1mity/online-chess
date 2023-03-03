@@ -52,6 +52,7 @@
   margin-right: 8px;
 }
 
+
 .navbar-buttons .signup-button {
   background-color: #383633;
   color: white;
@@ -107,12 +108,47 @@
   flex-direction: column;
 }
 
+.online-game-block-info-online-icon, .online-game-block-info-bots-icon {
+    font-size: 50px;
+}
+
 .online-game-block-info-buttons-play-online, .online-game-block-info-buttons-play-bots {
   display: flex;
   flex-direction: row;
   width: 100%;
   margin-bottom: 10%;
+  border: none;
+  border-radius: 4px;
+  color : white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+ }
+
+ .online-game-block-info-buttons-play-online:hover, .online-game-block-info-buttons-play-bots:hover {
+  cursor: pointer;
   }
+
+.online-game-block-info-buttons-play-online{
+   background-color: #b58863
+}
+.online-game-block-info-buttons-play-online:hover, .online-game-block-info-buttons-play-online:hover > * {
+   background-color: #d4a684
+}
+
+.online-game-block-info-buttons-play-bots{
+   background-color: #413e3c;
+}
+
+.online-game-block-info-buttons-play-bots:hover, .online-game-block-info-buttons-play-bots:hover > * {
+   background-color: #716b68
+}
+
+.online-game-block-info-buttons-play-online:hover {
+   animation: glowing-online-button 1.5s ease-in-out infinite;
+}
+
+.online-game-block-info-buttons-play-bots:hover {
+   animation: glowing-bots-button 1.5s ease-in-out infinite;
+}
 
 .online-game-block-info-buttons-play-online-text-title, .online-game-block-info-buttons-play-bots-text-title {
   font-size: 20px;
@@ -131,3 +167,29 @@
   height: 64px;
   margin-right: 8px;
 }
+
+
+@keyframes glowing-online-button {
+  0% {
+    box-shadow: 0 0 10px 0 rgba(181, 136, 99, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(181, 136, 99, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px 0 rgba(181, 136, 99, 0.7);
+  }
+}
+
+@keyframes glowing-bots-button {
+  0% {
+	box-shadow: 0 0 10px 0 rgba(65, 62, 60, 0.7);
+  }
+  50% {
+	box-shadow: 0 0 20px 10px rgba(65, 62, 60, 0.7);
+  }
+  100% {
+	box-shadow: 0 0 10px 0 rgba(65, 62, 60, 0.7);
+  }
+}
+
