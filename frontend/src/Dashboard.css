@@ -70,3 +70,64 @@
 .navbar-buttons .login-button:hover {
   background-color: #9ed071;
 }
+
+.home-main-layout {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  padding: 2% 10%;
+  width: 90%;
+  background-color: #312e2b;
+}
+
+.online-game-block {
+  display: flex;
+  flex-direction: row;
+  gap: 10%;
+}
+
+.board-img{
+   border-radius: 1%;
+}
+
+.online-game-block-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10%;
+}
+
+.online-game-block-info-title {
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.online-game-block-info-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.online-game-block-info-buttons-play-online, .online-game-block-info-buttons-play-bots {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 10%;
+  }
+
+.online-game-block-info-buttons-play-online-text-title, .online-game-block-info-buttons-play-bots-text-title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.online-game-block-info-buttons-play-online-text-subtitle, .online-game-block-info-buttons-play-bots-text-subtitle {
+  font-size: 13px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.online-play-button-img {
+  width: 64px;
+  height: 64px;
+  margin-right: 8px;
+}

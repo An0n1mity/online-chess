@@ -1,9 +1,3 @@
-* {
-  font-family: Arial, sans-serif;
-  font-weight: 400;
-  box-sizing: border-box;
-}
-
 body {
   height: 100vh;
   background: url("signup-background.png");
