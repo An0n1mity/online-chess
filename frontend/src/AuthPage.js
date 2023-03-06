@@ -127,8 +127,11 @@ class AuthPage extends Component {
 		  </div>
                 </li>
                 <li>
-                  <input type="password" id="password" placeholder="Password" onChange={this.handleChange} required/>
-                </li>
+		  <div className="password-input">
+		    <span className="password-input-icon"><i class="fa fa-lock icon"></i></span>
+		    <input type="password" id="password" placeholder="Password" onChange={this.handleChange} required/>
+		   </div>
+		</li>
                 <li>
                   <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>
                 </li>

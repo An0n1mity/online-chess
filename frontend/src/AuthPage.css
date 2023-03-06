@@ -19,11 +19,12 @@ fieldset {
 	font-size: 16px;
 }
 
-.login-input {
+.login-input, .password-input {
     display: flex;
 }
 
-.login-input-icon {
+
+.login-input-icon, .password-input-icon {
     background-color: #3c3a38;
     height: 33px;
     width: 44px;
@@ -33,7 +34,7 @@ fieldset {
     padding-top: 9px;
 }
 
-.login-input-icon i {
+.login-input-icon i, .password-input-icon i {
     font-size: 20px;
 }
 
@@ -73,7 +74,6 @@ input, textarea {
 
 input:focus, textarea:focus {
   outline: none;
-  border: 1px solid #f5a623;
 }
 
 form button {
