@@ -119,15 +119,15 @@ class AuthPage extends Component {
           <form onSubmit={this.handleSubmit}>
             <h2>Online-Chess ♟️</h2>
             <fieldset>
-              <legend>Log In</legend>
               <ul>
                 <li>
-                  <label for="username">Username:</label>
-                  <input type="text" id="username" onChange={this.handleChange} required/>
+		  <div className="login-input"> 
+		    <span className="login-input-icon"><i class="fa fa-user icon"></i></span>
+		    <input type="text" id="username" placeholder= "Username or Email" onChange={this.handleChange} required/>
+		  </div>
                 </li>
                 <li>
-                  <label for="password">Password:</label>
-                  <input type="password" id="password" onChange={this.handleChange} required/>
+                  <input type="password" id="password" placeholder="Password" onChange={this.handleChange} required/>
                 </li>
                 <li>
                   <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>
