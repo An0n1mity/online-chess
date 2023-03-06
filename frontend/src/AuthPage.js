@@ -3,7 +3,53 @@ import { Component } from 'react';
 import axios from 'axios';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import zxcvbn from 'zxcvbn';
-import signup_background from './signup-background.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
+
+class PasswordInput extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      password: "",
+      showPassword: false
+    };
+  }
+
+  handleChange = event => {
+    this.setState({ password: event.target.value });
+  };
+
+  toggleShowPassword = () => {
+    this.setState(prevState => ({ showPassword: !prevState.showPassword }));
+  };
+
+  render() {
+    const { password, showPassword } = this.state;
+    return (
+      <div className="password-input">
+        <span className="password-input-icon">
+          <i className="fa fa-lock icon"></i>
+        </span>
+        <input
+          type={showPassword ? "text" : "password"}
+          id="password"
+          placeholder="Password"
+          value={password}
+          onChange={this.handleChange}
+          required
+        />
+        <button
+          type="button"
+          onClick={this.toggleShowPassword}
+          className="password-visibility-icon"
+        >
+          <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+        </button>
+      </div>
+    );
+  }
+}
 
 class AuthPage extends Component {
   constructor(props){
@@ -127,10 +173,7 @@ class AuthPage extends Component {
 		  </div>
                 </li>
                 <li>
-		  <div className="password-input">
-		    <span className="password-input-icon"><i class="fa fa-lock icon"></i></span>
-		    <input type="password" id="password" placeholder="Password" onChange={this.handleChange} required/>
-		   </div>
+		    <PasswordInput />
 		</li>
                 <li>
                   <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>

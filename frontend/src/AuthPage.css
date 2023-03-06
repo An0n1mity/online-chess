@@ -23,6 +23,23 @@ fieldset {
     display: flex;
 }
 
+.password-input button {
+    height: 43.6px;
+    width: 44px;
+    border-left: none;
+    style: none;
+    background-color: #3c3a38;
+    color: #9e9d9c;
+    box-shadow: none;
+}
+
+.password-input button:hover {
+    background-color: #3c3a38;
+    color: #9e9d9c;
+    border: 1px solid #4d4b49;
+    border-left: none;
+    box-shadow: none;
+}
 
 .login-input-icon, .password-input-icon {
     background-color: #3c3a38;
@@ -32,6 +49,10 @@ fieldset {
     border: 1px solid #4d4b49;
     border-right: none;
     padding-top: 9px;
+}
+
+.password-input input{
+	border-right: none;
 }
 
 .login-input-icon i, .password-input-icon i {
@@ -70,6 +91,7 @@ form input, form button {
 
 input, textarea {
   background-color : #3c3a38;
+  color: #c1c1c0;
 }
 
 input:focus, textarea:focus {
