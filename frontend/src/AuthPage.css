@@ -74,6 +74,7 @@ form {
 }
 
 form h2 {
+  color: #fff;
   text-align: center;
   font-size: 30px;
   font-weight: 100;
@@ -87,6 +88,10 @@ form input, form button {
   width: 100%;
   height: 40px;
   margin-bottom: 20px;
+}
+
+form button {
+  cursor: pointer;
 }
 
 input, textarea {
@@ -103,6 +108,24 @@ form button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+.login-button {
+    color: #fff;
+    background-color: #b58863;
+    border-color: #b58863;
+    border-radius: 5px; 
+    box-shadow: 0 3px 0px #6c4c33;
+}
+
+.login-button:hover {
+    background-color: #b58863;
+    border-color: #b58863;
+    box-shadow: 0 3px 0px #6c4c33, 0 0 0px #b58863, 0 0 0px #b58863, 0 0 0px #b58863, 0 0 10px #b58863;
+}
+
+.account-button {
+	border-radius: 5px; 
+}
+
 .signup-button {
   background-color: #7f9264;
   color: white;
@@ -110,12 +133,6 @@ form button {
 
 .signup-button:hover {
   background-color: #667550
-}
-
-form button:hover {
-  background-color: #eef;
-  border: 1px solid #aaf;
-  cursor: pointer;
 }
 
 form ul {

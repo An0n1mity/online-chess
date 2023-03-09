@@ -104,7 +104,7 @@ class AuthPage extends Component {
 	    .then(response => {
 		console.log(response)
 	    })
-	    .catch(error => {
+.catch(error => {
 		console.log(error.response.data.error)
 		this.setState({ errorMessage: error.response.data.error })
 	    })
@@ -180,8 +180,8 @@ class AuthPage extends Component {
                 </li>
               </ul>
             </fieldset>
-            <button onClick={this.handleSubmit}>Submit</button>
-            <button type="button" onClick={() => this.changeView("signUp")}>Create an Account</button>
+            <button className="login-button" onClick={this.handleSubmit}>Log In</button>
+            <button type="button" className="account-button" onClick={() => this.changeView("signUp")}>Create an Account</button>
 	    {this.state.errorMessage ? <p>{this.state.errorMessage}</p> : null}
           </form>
         )
