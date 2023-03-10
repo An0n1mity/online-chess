@@ -27,9 +27,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/register', RegistrationAPIView.as_view(), name='register'),
     path('api/login', LoginAPIView.as_view(), name='login'),
-<<<<<<< HEAD
-    path('api/retrieve_update', UserRetrieveUpdateAPIView.as_view(), name='update'),
-=======
     path('api/user_info', UserAPIView.as_view(), name='user_info')
->>>>>>> login_database
 ]
