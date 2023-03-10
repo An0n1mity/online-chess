@@ -5,7 +5,7 @@ import PasswordStrengthBar from 'react-password-strength-bar';
 import zxcvbn from 'zxcvbn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
+import { Navigate } from 'react-router-dom';
 
 class PasswordInput extends Component {
   constructor(props) {
@@ -17,7 +17,10 @@ class PasswordInput extends Component {
   }
 
   handleChange = event => {
-    this.setState({ password: event.target.value });
+    const { onPasswordChange } = this.props;
+    const password = event.target.value;
+    onPasswordChange(password);
+    console.log(password);
   };
 
   toggleShowPassword = () => {
@@ -25,7 +28,7 @@ class PasswordInput extends Component {
   };
 
   render() {
-    const { password, showPassword } = this.state;
+    const { password, showPassword } = this.props;
     return (
       <div className="password-input">
         <span className="password-input-icon">
@@ -58,11 +61,17 @@ class AuthPage extends Component {
 	username: '',
 	email: '',
 	password: '',
+	login: false,
 	currentView: props.currentView,
 	errorMessage: '',
     }
     this.handleChange = this.handleChange.bind(this)
   }
+
+
+  handlePasswordChange = (password) => {
+    this.setState({ password });
+  };
 
   handleChange = (e) => {
       this.setState({ [e.target.id]: e.target.value })
@@ -103,6 +112,12 @@ class AuthPage extends Component {
 	    })
 	    .then(response => {
 		console.log(response)
+		if(response.status === 200) {
+		    this.setState({ login: true })
+		    localStorage.setItem('token', response.data.token)
+		    console.log(localStorage.getItem('token'))
+		    console.log(this.state.login)
+		}
 	    })
 .catch(error => {
 		console.log(error.response.data.error)
@@ -132,6 +147,7 @@ class AuthPage extends Component {
   }
 
   currentView = () => {
+    const { password } = this.state;
     switch(this.state.currentView) {
       case "signUp":
         return (
@@ -173,7 +189,10 @@ class AuthPage extends Component {
 		  </div>
                 </li>
                 <li>
-		    <PasswordInput />
+		    <PasswordInput
+			password={password}
+			onPasswordChange={this.handlePasswordChange}
+		    />
 		</li>
                 <li>
                   <a onClick={() => this.changeView("PWReset")} href="#">Forgot Password?</a>
@@ -212,8 +231,8 @@ class AuthPage extends Component {
 
 
   render() {
-    return (
-      <section id="entry-page">
+    return this.state.login ? <Navigate to="/home"/> : (
+	  <section id="entry-page">
         {this.currentView()}
       </section>
     )

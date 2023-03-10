@@ -3,7 +3,21 @@ import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import './HomePage.css';
 import ProfilePicture from "./profile_picture.svg";
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
+const getUserData = async (token) => {
+    try {
+	const response = await axios.get('http://localhost:8000/api/user_info', {
+	    headers: {
+		Authorization: `Token ${token}`
+	    }
+	});
+	return response.data;
+	} catch (error) {
+	    console.log(error);
+	}
+};
 
 const HomeBaseHeaderUserInfo = ({username, country}) => {
     return (
@@ -17,7 +31,17 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 	
 
 const HomeBase = () => {
-    return (
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+	const fetchData = async () => {
+	    const token = localStorage.getItem('token');
+	    const data = await getUserData(token);
+	    setUserData(data);
+	};
+	fetchData();
+	}, []);
+	       return (
 	<div className="home-base-component">
 	    <header className="home-base-component-header">
 		<HomeBaseHeaderUserInfo username="username" country="🇫🇷"/>
