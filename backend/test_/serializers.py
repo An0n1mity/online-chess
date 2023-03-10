@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import User
 from django.contrib.auth import authenticate
-
+from rest_framework.authtoken.models import Token
 
 """
 In Django, a serializer is a module that allows you to convert complex data types, such as Django models, into Python data types that can be easily rendered into JSON or other content types. The "goal" of a serializer refers to its ability to handle the serialization process in an efficient and effective manner, with a focus on providing a clean, well-structured representation of the data.
@@ -45,7 +45,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        Token.objects.create(user=user)
+        return user
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
@@ -79,8 +81,10 @@ class LoginSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError('error : This user has been deactivated.')
 
+        token, _ = Token.objects.get_or_create(user=user)
+
         return {
             "email": user.email,
             "username": user.username,
-            "token": user.token
+            "token": token.key
         }

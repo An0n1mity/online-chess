@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'test_',
     'corsheaders',
-    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'django_extensions',
 ]
 
@@ -145,8 +145,11 @@ REST_FRAMEWORK = {
         # Any view that uses DRF will automatically use the DjangoFilterBackend to filter the queryset
         # Any view that uses DRF will automatically use JSON Web Tokens (JWT) for authentication. This allows the API to verify the authenticity of requests and ensures that only authorized users can access the protected resources
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.TokenAuthentication',
             ],
+         'DEFAULT_PERMISSION_CLASSES': [
+             'rest_framework.permissions.AllowAny',
+            ]
         }
 
 

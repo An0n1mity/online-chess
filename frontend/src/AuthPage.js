@@ -115,6 +115,7 @@ class AuthPage extends Component {
 		if(response.status === 200) {
 		    this.setState({ login: true })
 		    localStorage.setItem('token', response.data.token)
+		    console.log(localStorage.getItem('token'))
 		    console.log(this.state.login)
 		}
 	    })

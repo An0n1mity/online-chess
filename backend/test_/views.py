@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import JsonResponse    
+from django.http import JsonResponse
+from django.utils.regex_helper import walk_to_end    
 from django.views.decorators.csrf import csrf_exempt
 import json 
 from . import chess_logic
@@ -11,13 +12,12 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import User
 
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from .serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.response import Response
-
+from rest_framework import authentication, permissions
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -93,3 +93,10 @@ class LoginAPIView(APIView):
             except:
                 pass
 
+class UserAPIView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = User.objects.get(username=request.user.username)
+        return Response({'username': user.username, 'email': user.email})
