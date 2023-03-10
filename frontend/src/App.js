@@ -8,7 +8,8 @@ import { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { EvalBar} from "chess-evaluation-bar";
 import AuthPage from './AuthPage';
-
+import Landing from './LandingPage';
+import Home from './HomePage';
 
 // Routing 
 import {
@@ -189,9 +190,10 @@ const App = () => {
 	return (
 	    <Router>
 	        <Routes>
-		    <Route path="/" element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
-		    <Route path="/login" element={<AuthPage/>}/>
-		    <Route path='/home' element={<AuthWrapper isAuthenticated={isAuthenticated}/>}/>
+		    <Route path="/" element={<Landing isAuthenticated={hasToken()}/>}/>
+		    <Route path="/login" element={<AuthPage currentView="logIn"/>}/>
+		    <Route path="/signup" element={<AuthPage currentView="signUp"/>}/>
+		    <Route path='/home' element={<AuthWrapperHome isAuthenticated={isAuthenticated}/>}/>
 		</Routes>
 	    </Router>
 	);
@@ -207,10 +209,10 @@ const hasToken = () => {
 	}
 };
 
-const AuthWrapper = ({isAuthenticated}) => {
+const AuthWrapperHome = ({isAuthenticated}) => {
     hasToken() ? isAuthenticated = true : isAuthenticated = false;
     return isAuthenticated ? (
-	<Navigate to="/home" replace />
+	<Home/>
 	) : (
 	<Navigate to="/login" replace />
 	);
