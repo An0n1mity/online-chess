@@ -36,3 +36,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.home-base-header-user-info-flag {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+}

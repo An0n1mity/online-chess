@@ -40,7 +40,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         # List all of the fields that could possibly be included in a request
         # or response, including fields specified explicitly above.
-        fields = ['email', 'username', 'password', 'token']
+        fields = ['email', 'username', 'password', 'token', 'country']
         validators = []
 
     def create(self, validated_data):
@@ -49,10 +49,71 @@ class RegistrationSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
 
+def country_to_flag(country):
+    if country == 'US':
+        return '🇺🇸'
+    elif country == 'CA':
+        return '🇨🇦'
+    elif country == 'GB':
+        return '🇬🇧'
+    elif country == 'AU':
+        return '🇦🇺'
+    elif country == 'DE':
+        return '🇩🇪'
+    elif country == 'FR':
+        return '🇫🇷'
+    elif country == 'NL':
+        return '🇳🇱'
+    elif country == 'SE':
+        return '🇸🇪'
+    elif country == 'NO':
+        return '🇳🇴'
+    elif country == 'DK':
+        return '🇩🇰'
+    elif country == 'FI':
+        return '🇫🇮'
+    elif country == 'IT':
+        return '🇮🇹'
+    elif country == 'ES':
+        return '🇪🇸'
+    elif country == 'MX':
+        return '🇲🇽'
+    elif country == 'BR':
+        return '🇧🇷'
+    elif country == 'AR':
+        return '🇦🇷'
+    elif country == 'CO':
+        return '🇨🇴'
+    elif country == 'PE':
+        return '🇵🇪'
+    elif country == 'CL':
+        return '🇨🇱'
+    elif country == 'VE':
+        return '🇻🇪'
+    elif country == 'CO':
+        return '🇨🇴'
+    elif country == 'UY':
+        return '🇺🇾'
+    elif country == 'PY':
+        return '🇵🇾'
+    elif country == 'BO':
+        return '🇧🇴'
+    elif country == 'EC':
+        return '🇪🇨'
+    elif country == 'CR':
+        return '🇨🇷'
+    elif country == 'SV':
+        return '🇸🇻'
+    elif country == 'GT':
+        return '🇬🇹'
+    elif country == 'HN':
+        return '🇭🇳'
+    
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    country = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
 
@@ -82,9 +143,9 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('error : This user has been deactivated.')
 
         token, _ = Token.objects.get_or_create(user=user)
-
         return {
             "email": user.email,
             "username": user.username,
-            "token": token.key
+            "token": token.key,
+            "country": user.country
         }

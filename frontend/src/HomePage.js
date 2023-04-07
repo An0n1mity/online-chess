@@ -6,6 +6,8 @@ import ProfilePicture from "./profile_picture.svg";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import WorldFlag from 'react-world-flags';
+
 const getUserData = async (token) => {
     try {
 	const response = await axios.get('http://localhost:8000/api/user_info', {
@@ -24,11 +26,12 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 	<div className="home-base-header-user-info">
 	    <img className="home-base-header-user-info-profile-img" src={ProfilePicture} alt="user" />
 	    <h1 className="home-base-header-user-info-username">{username}</h1>
-	    <icon className="home-base-header-user-info-country-icon">{country}</icon>
+			<WorldFlag className="home-base-header-user-info-flag" code={country} />
 	</div>
 	);
 };
 	
+
 
 const HomeBase = () => {
     const [userData, setUserData] = useState(null);
@@ -44,7 +47,10 @@ const HomeBase = () => {
 	       return (
 	<div className="home-base-component">
 	    <header className="home-base-component-header">
-		<HomeBaseHeaderUserInfo username="username" country="🇫🇷"/>
+					   <HomeBaseHeaderUserInfo
+						   username={userData ? userData.username : "Loading..."}
+						   country={userData ? userData.country : "Loading..."}
+					   />
 	    </header>
 	</div>
 	);

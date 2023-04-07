@@ -10,6 +10,7 @@ import django.contrib.auth as auth
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.contrib.gis.geoip2 import GeoIP2
 from .models import User
 
 from rest_framework import status
@@ -26,7 +27,24 @@ class RegistrationAPIView(APIView):
     def post(self, request):
         user = request.data.get('user', {})
         # Check if the mail or the username already exists 
+        #serializer = RegistrationSerializer(data=user)
+
+        # Get the client IP address
+        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
+
+        # Use geoip2 to get the country from the IP address
+        # if local IP address, use 'US' as default
+        if client_ip == '127.0.0.1':
+            country = 'US'
+        else:
+            geo = GeoIP2()
+            country = geo.country_code(client_ip)
+
+        # Add the country to the user data
+        user['country'] = country
+        # Update the serializer with the country 
         serializer = RegistrationSerializer(data=user)
+
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -93,10 +111,19 @@ class LoginAPIView(APIView):
             except:
                 pass
 
+"""
+The UserAPIView class is a Django Rest Framework class-based view that provides a way to retrieve basic information about the currently authenticated user.
+
+Attributes:
+    permission_classes: A list of permission classes that determine who can access this view. In this case, the view can only be accessed by authenticated users, as specified by the IsAuthenticated permission class.
+
+Methods:
+    get: Handles GET requests to the view. Retrieves the user object of the currently authenticated user using the User.objects.get() method, and returns a JSON response containing the username and email of the user.
+"""
 class UserAPIView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = User.objects.get(username=request.user.username)
-        return Response({'username': user.username, 'email': user.email})
+        return Response({'username': user.username, 'email': user.email, 'country': user.country})
