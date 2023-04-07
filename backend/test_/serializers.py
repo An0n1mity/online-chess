@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, ChessGameStatistics
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -46,68 +46,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
         user = User.objects.create_user(**validated_data)
+
+        # Create the chess statistics for the user 
+        ChessGameStatistics.objects.create(user=user)
+
         Token.objects.create(user=user)
         return user
-
-def country_to_flag(country):
-    if country == 'US':
-        return '🇺🇸'
-    elif country == 'CA':
-        return '🇨🇦'
-    elif country == 'GB':
-        return '🇬🇧'
-    elif country == 'AU':
-        return '🇦🇺'
-    elif country == 'DE':
-        return '🇩🇪'
-    elif country == 'FR':
-        return '🇫🇷'
-    elif country == 'NL':
-        return '🇳🇱'
-    elif country == 'SE':
-        return '🇸🇪'
-    elif country == 'NO':
-        return '🇳🇴'
-    elif country == 'DK':
-        return '🇩🇰'
-    elif country == 'FI':
-        return '🇫🇮'
-    elif country == 'IT':
-        return '🇮🇹'
-    elif country == 'ES':
-        return '🇪🇸'
-    elif country == 'MX':
-        return '🇲🇽'
-    elif country == 'BR':
-        return '🇧🇷'
-    elif country == 'AR':
-        return '🇦🇷'
-    elif country == 'CO':
-        return '🇨🇴'
-    elif country == 'PE':
-        return '🇵🇪'
-    elif country == 'CL':
-        return '🇨🇱'
-    elif country == 'VE':
-        return '🇻🇪'
-    elif country == 'CO':
-        return '🇨🇴'
-    elif country == 'UY':
-        return '🇺🇾'
-    elif country == 'PY':
-        return '🇵🇾'
-    elif country == 'BO':
-        return '🇧🇴'
-    elif country == 'EC':
-        return '🇪🇨'
-    elif country == 'CR':
-        return '🇨🇷'
-    elif country == 'SV':
-        return '🇸🇻'
-    elif country == 'GT':
-        return '🇬🇹'
-    elif country == 'HN':
-        return '🇭🇳'
     
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)

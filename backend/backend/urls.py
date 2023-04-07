@@ -27,5 +27,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/register', RegistrationAPIView.as_view(), name='register'),
     path('api/login', LoginAPIView.as_view(), name='login'),
-    path('api/user_info', UserAPIView.as_view(), name='user_info')
+    path('api/user_info', UserAPIView.as_view(), name='user_info'),
+    path('api/chess_stats', ChessStatisticsAPIView.as_view(), name='chess_statistics')
 ]

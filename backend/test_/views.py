@@ -11,7 +11,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.gis.geoip2 import GeoIP2
-from .models import User
+from .models import User, ChessGameStatistics
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -127,3 +127,18 @@ class UserAPIView(APIView):
     def get(self, request):
         user = User.objects.get(username=request.user.username)
         return Response({'username': user.username, 'email': user.email, 'country': user.country})
+
+class ChessStatisticsAPIView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = User.objects.get(username=request.user.username)
+        stats = ChessGameStatistics.objects.get(user=user)
+        return Response({
+            'games_played': stats.games_played,
+            'games_won': stats.games_won,
+            'games_lost': stats.games_lost,
+            'games_drawn':  stats.games_drawn,
+            'elo_rating': stats.elo_rating
+        })

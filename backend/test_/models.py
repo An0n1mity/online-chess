@@ -135,3 +135,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token
+
+class ChessGameStatistics(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    games_played = models.IntegerField(default=0)
+    games_won = models.IntegerField(default=0)
+    games_lost = models.IntegerField(default=0)
+    games_drawn = models.IntegerField(default=0)
+    elo_rating = models.IntegerField(default=0)
+    class Meta:
+        verbose_name_plural = 'Chess game statistics'

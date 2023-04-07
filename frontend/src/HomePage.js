@@ -21,6 +21,19 @@ const getUserData = async (token) => {
 	}
 };
 
+const getChessStats = async (token) => {
+	try {
+		const response = await axios.get('http://localhost:8000/api/chess_stats', {
+			headers: {
+				Authorization: `Token ${token}`
+			}
+		});
+		return response.data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 const HomeBaseHeaderUserInfo = ({username, country}) => {
     return (
 	<div className="home-base-header-user-info">
@@ -34,13 +47,16 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 
 
 const HomeBase = () => {
-    const [userData, setUserData] = useState(null);
+	const [userDataResponse, setUserData] = useState(null);
+	const [chessStatsResponse, setChessStats] = useState(null);
 
     useEffect(() => {
 	const fetchData = async () => {
 	    const token = localStorage.getItem('token');
-	    const data = await getUserData(token);
-	    setUserData(data);
+		const userDataResponse = await getUserData(token);
+		const chessStatsResponse = await getChessStats(token);
+		setUserData(userDataResponse);
+		setChessStats(chessStatsResponse);
 	};
 	fetchData();
 	}, []);
@@ -48,9 +64,18 @@ const HomeBase = () => {
 	<div className="home-base-component">
 	    <header className="home-base-component-header">
 					   <HomeBaseHeaderUserInfo
-						   username={userData ? userData.username : "Loading..."}
-						   country={userData ? userData.country : "Loading..."}
+						   username={userDataResponse ? userDataResponse.username : "Loading..."}
+						   country={userDataResponse ? userDataResponse.country : "Loading..."}
 					   />
+					   {chessStatsResponse && (
+						   <div className=".home-chess-stats">
+							   <p className="games-played">Games played: {chessStatsResponse.games_played}</p>
+							   <p className="games-won">Games won: {chessStatsResponse.games_won}</p>
+							   <p className="games-lost">Games lost: {chessStatsResponse.games_lost}</p>
+							   <p className="games-drawn">Games drawn: {chessStatsResponse.games_drawn}</p>
+							   <p className="elo-rating">Elo rating: {chessStatsResponse.elo_rating}</p>
+						   </div>
+					   )}
 	    </header>
 	</div>
 	);

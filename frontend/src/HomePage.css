@@ -42,3 +42,13 @@
   height: 24px;
   margin-right: 0.5rem;
 }
+.home-chess-stats {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.home-chess-stats p {
+  margin-bottom: 1rem;
+}
