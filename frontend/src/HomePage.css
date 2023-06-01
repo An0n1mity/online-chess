@@ -36,3 +36,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.home-base-header-user-info-flag {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+}
+.home-chess-stats {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.home-chess-stats p {
+  margin-bottom: 1rem;
+}

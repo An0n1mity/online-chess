@@ -1,0 +1,287 @@
+.container_ {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 33%;
+    height: 100vh;
+    margin-left: 33%;
+    background-color: #272522;
+}
+
+.current-bot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    height: 50vh;
+    background-color: #272522;
+}
+
+.current-bot-header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: #272522;
+}
+
+.current-bot-header button {
+    margin-top: 10px;
+    display: flex;
+    border-style: none;
+    background-color: #272522;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.current-bot h1 {
+    margin-left: 26%;
+    text-align: center;
+    font-size: big;
+    color: white;
+    background-color: #272522;
+}
+
+.current-bot-stats {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    height: 50%;
+    background-color: #272522;
+}
+
+.current-bot-stats h1 {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    font-size: small;
+    color: white;
+    background-color: #272522;
+}
+
+.current-bot-stats h2 {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    font-size: small;
+    color: white;
+    background-color: #272522;
+}
+
+.current-bot-flag {
+    display: flex;
+    margin: auto;
+    width: 20%;
+    height: 100%;
+}
+
+.current-bot-image {
+    width: 30%;
+    height: 30%;
+    margin: auto;
+    border-radius: 10%;
+    background-color: white;
+}
+
+.current-bot-image img {
+    width: 100%;
+    height: 100%;
+}
+
+.current-bot-paragraph {
+    width: 100%;
+    height: 50%;
+    margin: auto;
+    background-color: #272522;
+}
+
+.current-bot-paragraph p {
+    text-align: center;
+    font-size: small;
+    color: white;
+}
+
+.selection {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 50vh;
+    background-color: #272522;
+    ;
+}
+
+.selection-title {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20%;
+    width: 100%;
+    height: 10%;
+    background-color: #272522;
+}
+
+.selection-title h1 {
+    text-align: center;
+    font-size: small;
+    color: white;
+}
+
+.selection-options {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 30%;
+    background-color: #272522;
+}
+
+.selection-option {
+    border-style: none;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    justify-content: space-between;
+    align-items: center;
+    width: 30%;
+    height: 100%;
+    background-color: #272522;
+    box-sizing: border-box;
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
+.selection-option:focus {
+    border-style: none;
+}
+
+.selection-option:focus img,
+.setting-color-option:focus {
+    border-color: #7fa650;
+    border-style: solid;
+    box-sizing: border-box;
+}
+
+.selection-option img {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    border-radius: 10%;
+    background-color: white;
+}
+
+.selection-button {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #272522;
+}
+
+.selection-button button {
+    width: 100%;
+    height: 50%;
+    background-color: #7fa650;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: big;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 2px 0px #537133;
+    cursor: pointer;
+}
+
+.selection-button button:hover {
+    background-color: hsl(87, 49%, 59%);
+    box-shadow: 0 5px 4px 0px hsl(87, 49%, 59%), 0 6px 4px 0px #537133;
+}
+
+.setting {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 30vh;
+    background-color: red;
+}
+
+.settings-colors,
+.settings-time {
+    background-color: #272522;
+    height: 50%;
+    box-sizing: border-box;
+    align-items: center;
+    text-align: center;
+}
+
+.settings-colors h1,
+.settings-time h1 {
+    text-align: center;
+    font-size: small;
+    color: white;
+}
+
+.setting-color-option {
+    display: inline-block;
+    border-style: none;
+    border-radius: 10%;
+    margin-left: 1%;
+    width: 10%;
+    height: 40%;
+    cursor: pointer;
+}
+
+.settings-time select {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 30%;
+    box-sizing: border-box;
+    margin: auto;
+}
+
+.setting-color-option#white {
+    background-color: white;
+}
+
+.setting-color-option#black,
+.setting-color-option#random {
+    background-color: #272522;
+}
+
+.setting-color-option img {
+    width: 100%;
+    height: 100%;
+}
+
+.start-button {
+    height: 20%;
+    width: 68%;
+    align-items: center;
+    text-align: center;
+}
+
+.start-button button {
+    width: 100%;
+    height: 40%;
+    background-color: #7fa650;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: big;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 2px 0px #537133;
+    margin-top: 15%;
+    cursor: pointer;
+}
+
+.start-button button:hover {
+    background-color: hsl(87, 49%, 59%);
+    box-shadow: 0 5px 4px 0px hsl(87, 49%, 59%), 0 6px 4px 0px #537133;
+}

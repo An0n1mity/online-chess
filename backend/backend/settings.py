@@ -152,5 +152,10 @@ REST_FRAMEWORK = {
             ]
         }
 
+GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
+print(GEOIP_PATH)
+GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
+
+
 
 

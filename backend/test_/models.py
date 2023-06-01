@@ -15,18 +15,17 @@ class UserManager(BaseUserManager):
     to create `User` objects.
     """
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password=None, country=None):
         """Create and return a `User` with an email, username and password."""
         if username is None:
             raise TypeError('Users must have a username.')
 
         if email is None:
             raise TypeError('Users must have an email address.')
-
-        user = self.model(username=username, email=self.normalize_email(email))
+        
+        user = self.model(username=username, email=self.normalize_email(email), country=country)
         user.set_password(password)
         user.save()
-
         return user
 
     def create_superuser(self, username, email, password):
@@ -54,6 +53,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     # the user anyways, we will also use the email for logging in because it is
     # the most common form of login credential at the time of writing.
     email = models.EmailField(db_index=True, unique=True)
+
+    # Add the country field 
+    country = models.CharField(max_length=255, blank=True, null=True)
 
     # When a user no longer wishes to use our platform, they may try to delete
     # their account. That's a problem for us because the data we collect is
@@ -133,3 +135,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token
+
+class ChessGameStatistics(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    games_played = models.IntegerField(default=0)
+    games_won = models.IntegerField(default=0)
+    games_lost = models.IntegerField(default=0)
+    games_drawn = models.IntegerField(default=0)
+    elo_rating = models.IntegerField(default=0)
+    class Meta:
+        verbose_name_plural = 'Chess game statistics'

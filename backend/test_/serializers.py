@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, ChessGameStatistics
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -40,19 +40,24 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         # List all of the fields that could possibly be included in a request
         # or response, including fields specified explicitly above.
-        fields = ['email', 'username', 'password', 'token']
+        fields = ['email', 'username', 'password', 'token', 'country']
         validators = []
 
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
         user = User.objects.create_user(**validated_data)
+
+        # Create the chess statistics for the user 
+        ChessGameStatistics.objects.create(user=user)
+
         Token.objects.create(user=user)
         return user
-
+    
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    country = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
 
@@ -82,9 +87,9 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('error : This user has been deactivated.')
 
         token, _ = Token.objects.get_or_create(user=user)
-
         return {
             "email": user.email,
             "username": user.username,
-            "token": token.key
+            "token": token.key,
+            "country": user.country
         }
