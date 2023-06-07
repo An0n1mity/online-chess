@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'django_extensions',
+    'channels',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -133,11 +134,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ("http://localhost:3000", 
-                               "http://127.0.0.1:3000",
+CORS_ORIGIN_WHITELIST = (       "http://localhost:3000", 
+                                "http://127.0.0.1:3000",
+                                "http://localhost:8000", 
+                                "http://127.0.0.1:8000",
                          )
 CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000", 
+        "http://127.0.0.1:8000",
 ]
 
 # REST FRAMEWORK
@@ -155,7 +161,6 @@ REST_FRAMEWORK = {
 GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
 print(GEOIP_PATH)
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
-
 
 
 

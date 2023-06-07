@@ -7,7 +7,7 @@ import './BotSelectionPage.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-
+import start_sound from './start.mp3';
 
 const white_color_selection = 'http://127.0.0.1:8000/images/white_color_selection.png';
 const black_color_selection = 'http://127.0.0.1:8000/images/black_color_selection.png';
@@ -36,6 +36,9 @@ function BotsSelection() {
     // Selected color 
     const [selectedColor, setSelectedColor] = useState('w');
 
+    // Play sound when the player clicks on choose
+    const startSound = new Audio(start_sound);
+
     const handleStartGame = async () => {
         if (selectedBot === '') {
             alert('Please select a bot difficulty.');
@@ -53,7 +56,7 @@ function BotsSelection() {
                     Authorization: `Token ${localStorage.getItem('token')}`,
                 },
             });
-
+            startSound.play();
             navigate(`/game/${response.data.game_id}`);
         } catch (error) {
             console.error('Error:', error);

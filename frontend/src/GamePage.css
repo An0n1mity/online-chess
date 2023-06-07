@@ -81,3 +81,42 @@
     height: 55px;
     width: 55px;
 }
+.popup-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: small;
+}
+
+.popup-content h1 {
+    text-align: center;
+    font-size: big;
+    font-weight: bold;
+}
+
+.popup-content p {
+    text-align: center;
+}
+
+.popup-stats-player {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    width: 100px;
+}
+
+.popup-stats-bot {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    width: 100px;
+}
+
+.popup-stats img {
+    width: 55px;
+    height: 55px;
+    background-color: #fff;
+}

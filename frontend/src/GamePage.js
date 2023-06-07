@@ -8,6 +8,8 @@ import axios from "axios";
 import Chess from "chess.js";
 
 import drop_audio from "./drop.mp3";
+import take_audio from "./take.mp3";
+import end_audio from "./end.mp3";
 
 function to_color(color) {
     if (color === "w") {
@@ -97,10 +99,15 @@ function Stats(props) {
     useEffect(() => {
         let timer = null;
 
-        if (!props.stopClock) {
+        if (!props.stopClock && !props.gameOver) {
             timer = setInterval(() => {
                 const time = new Date(remainingTime.getTime() - 1000);
                 setRemainingTime(time);
+
+                // If time is up, handle game over
+                if (time.getTime() <= 0) {
+                    props.handleGameOver('time limit');
+                }
             }, 1000);
         }
 
@@ -128,7 +135,12 @@ function Game() {
     // Get the game id from the url
     const { gameId } = useParams();
     const [game, setGame] = useState();
+    // Is the game over
     const [gameOver, setGameOver] = useState(false);
+    // Game over type 
+    const [gameOverType, setGameOverType] = useState("");
+    // is player won 
+    const [playerWon, setPlayerWon] = useState(false);
     const [showPopup, setShowPopup] = useState(true);
     const [botDifficulty, setBotDifficulty] = useState("");
     // Player color
@@ -149,6 +161,23 @@ function Game() {
 
     //drop 
     const dropSound = new Audio(drop_audio);
+    //take
+    const captureSound = new Audio(take_audio);
+    //end
+    const endSound = new Audio(end_audio);
+
+
+    // function to handle game over
+    function handleGameOver(type) {
+        setGameOverType(type);
+        setGameOver(true);
+        setShowPopup(true);
+        setStopBotClock(true);
+        setStopPlayerClock(true);
+        endSound.play();
+    };
+
+
     // When the component mounts, fetch the fen from the backend
     useEffect(() => {
         const fetchGameState = async () => {
@@ -165,7 +194,12 @@ function Game() {
                     window.location.href = "/";
                 }
                 console.log(data);
-
+                // Get if the game is completed
+                setGameOver(data.is_game_complete);
+                // Get the reason of game over
+                setGameOverType(data.reason);
+                // Get if the player won 
+                setPlayerWon(data.is_won);
                 // Get the player color
                 setPlayerColor(data.color);
                 // Get the bot difficulty
@@ -180,19 +214,21 @@ function Game() {
                 setPlayerRemainingTime(data.player_remaining_time);
                 // Get the bot remaining time
                 setBotRemainingTime(data.bot_remaining_time);
-                // Start the clock of first player to play
-                if (playerColor === 'w') {
-                    setStopPlayerClock(true);
-                } else {
-                    setStopBotClock(true);
-                }
+
                 const copy_game = new Chess(data.state);
                 setGame(copy_game);
-                if (copy_game.in_checkmate() || copy_game.in_stalemate()) {
-                    setGameOver(true);
-                    setShowPopup(true);
-                    setStopBotClock(true);
-                    setStopPlayerClock(true);
+
+                // Check if the game is over in case of checkmate or stalemate or timed out
+                if (data.is_game_complete) {
+                    handleGameOver(data.reason);
+                }
+
+                else {
+                    if (playerColor === 'w') {
+                        setStopPlayerClock(true);
+                    } else {
+                        setStopBotClock(true);
+                    }
                 }
 
                 // Check if it is the player's turn to play
@@ -248,17 +284,31 @@ function Game() {
             console.log(data);
             const game_copy = new Chess(data.state);
             setGame(game_copy);
-            dropSound.currentTime = 0;
-            dropSound.play();
+
+            if (data.captured) {
+                captureSound.currentTime = 0;
+                captureSound.play();
+            }
+            else {
+                dropSound.currentTime = 0;
+                dropSound.play();
+            }
 
             setBotRemainingTime(data.bot_remaining_time);
             setPlayerRemainingTime(data.player_remaining_time);
             setStopPlayerClock(false);
             setStopBotClock(true);
 
-            if (game_copy.in_checkmate() || game_copy.in_stalemate()) {
-                setGameOver(true);
-                setShowPopup(true);
+            if (game_copy.in_checkmate() || game_copy.in_stalemate() || playerRemainingTime <= 0 || botRemainingTime <= 0) {
+                if (game_copy.in_checkmate()) {
+                    handleGameOver('checkmate');
+                }
+                else if (game_copy.in_stalemate()) {
+                    handleGameOver('stalemate');
+                }
+                else if (playerRemainingTime <= 0 || botRemainingTime <= 0) {
+                    handleGameOver('time limit');
+                }
             }
         } catch (error) {
             console.error('Error:', error);
@@ -275,6 +325,10 @@ function Game() {
     }
 
     function onDrop(sourceSquare, targetSquare) {
+        // if game is over, don't allow moves
+        if (gameOver) {
+            return false;
+        }
         const move = makeMove({
             from: sourceSquare,
             to: targetSquare,
@@ -286,19 +340,49 @@ function Game() {
             return false;
         }
         else {
-            dropSound.play();
+            // check if the move takes a piece 
+            if (move.captured) {
+                captureSound.currentTime = 0;
+                captureSound.play();
+            }
+            else {
+                dropSound.currentTime = 0;
+                dropSound.play();
+            }
             // send move to backend
             sendMove(move);
             return true;
         }
     }
 
-    const Popup = () => {
+    function Popup(props) {
+        let message;
+        let score;
+
+        if (props.type == true) {
+            message = "You won by";
+            score = "1 - 0";
+        }
+        else {
+            message = "You lost by";
+            score = "0 - 1";
+        }
         return (
             <div className="popup">
                 <div className="popup-content">
-                    <h2>Game Over</h2>
-                    <p>{game.in_checkmate() ? "Checkmate" : "Stalemate"}</p>
+                    <h1>{message}</h1>
+                    <p>{gameOverType}</p>.
+                    <div className="popup-stats">
+                        <div className="popup-stats-player">
+                            <img src={playerAvatar} alt="player-avatar" />
+                            <p>{playerName}</p>
+                        </div>
+                        <p>{score}</p>
+                        <div className="popup-stats-bot">
+                            <img src={level_to_avatar(botDifficulty)} alt="bot-avatar" />
+                            <p>{level_to_name(botDifficulty)}</p>
+                        </div>
+                    </div>
                     <button onClick={() => setShowPopup(false)}>Close</button>
                 </div>
             </div>
@@ -313,12 +397,12 @@ function Game() {
 
         return (
             < div className="container" >
-                {gameOver && showPopup && <Popup />}
-                <Stats id="bot-stats" avatar={level_to_avatar(botDifficulty)} name={level_to_name(botDifficulty)} elo={level_to_elo(botDifficulty)} remainingTime={botRemainingTime} stopClock={stopBotClock} />
+                {gameOver && showPopup && <Popup type={playerWon} />}
+                <Stats id="bot-stats" avatar={level_to_avatar(botDifficulty)} name={level_to_name(botDifficulty)} elo={level_to_elo(botDifficulty)} remainingTime={botRemainingTime} stopClock={stopBotClock} handleGameOver={handleGameOver} gameOver={gameOver} />
                 <div className="board-container">
                     {game && <Chessboard position={game.fen()} onPieceDrop={onDrop} boardOrientation={to_color(playerColor)} />}
                 </div>
-                <Stats id="player-stats" avatar={playerAvatar} name={playerName} elo={playerElo} remainingTime={playerRemainingTime} stopClock={stopPlayerClock} />
+                <Stats id="player-stats" avatar={playerAvatar} name={playerName} elo={playerElo} remainingTime={playerRemainingTime} stopClock={stopPlayerClock} handleGameOver={handleGameOver} gameOver={gameOver} />
             </div >
         );
     }

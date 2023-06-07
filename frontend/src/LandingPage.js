@@ -7,7 +7,7 @@ const OnlineGameBlock = () => {
   return (
       <div className="online-game-block">
 	  <div className="online-game-block-board-img">
-	    <img className="board-img" src={require("./board.png")} alt="board" />
+			  <img className="board-img" src="http://127.0.0.1:8000/images/board.png" alt="board" />
 	  </div>
 	  <div className="online-game-block-info">
 	    <h1 className="online-game-block-info-title">Play Chess <br/>Online !</h1>
@@ -23,7 +23,7 @@ const OnlineGameBlock = () => {
 			</div>
 		    </button>
 		</Link>
-		<Link to="/play" style={{ textDecoration: 'none' }}>
+				  <Link to="/bots" style={{ textDecoration: 'none' }}>
 		    <button className="online-game-block-info-buttons-play-bots">
 			<div className="online-game-block-info-buttons-play-bots-img">
 			    <icon className="online-game-block-info-bots-icon">🤖</icon>

@@ -6,10 +6,11 @@ import './AuthPage.css';
 import React, {Component} from 'react';
 import { useState } from "react";
 import { Chessboard } from "react-chessboard";
-import { EvalBar} from "chess-evaluation-bar";
 import AuthPage from './AuthPage';
 import Landing from './LandingPage';
 import Home from './HomePage';
+import BotsSelection from './BotSelectionPage';
+import Game from './GamePage';
 
 // Routing 
 import {
@@ -190,11 +191,13 @@ const App = () => {
 	return (
 	    <Router>
 	        <Routes>
-		    <Route path="/" element={<Landing isAuthenticated={hasToken()}/>}/>
-		    <Route path="/login" element={<AuthPage currentView="logIn"/>}/>
-		    <Route path="/signup" element={<AuthPage currentView="signUp"/>}/>
-		    <Route path='/home' element={<AuthWrapperHome isAuthenticated={isAuthenticated}/>}/>
-		</Routes>
+				<Route path="/" element={<Landing isAuthenticated={hasToken()} />} />
+				<Route path="/login" element={<AuthPage currentView="logIn" />} />
+				<Route path="/signup" element={<AuthPage currentView="signUp" />} />
+				<Route path='/home' element={<AuthWrapperHome isAuthenticated={isAuthenticated} />} />
+				<Route path="/bots" element={<BotsSelection />} />
+				<Route path="/game/:gameId" element={<Game />} />
+			</Routes>
 	    </Router>
 	);
 }

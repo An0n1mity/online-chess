@@ -3,22 +3,39 @@ from django.http import JsonResponse
 from django.utils.regex_helper import walk_to_end    
 from django.views.decorators.csrf import csrf_exempt
 import json 
-from . import chess_logic
-
+import chess
+import chess.engine
 from django.contrib.auth import get_user_model
 import django.contrib.auth as auth
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.gis.geoip2 import GeoIP2
-from .models import User, ChessGameStatistics
+from .models import User, ChessGameStatistics, ChessGame
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import RegistrationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, ChessGameSerializer
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from rest_framework.authtoken.models import Token
+import time
+import datetime 
+
+
+from django.http import FileResponse, HttpResponseNotFound
+from django.conf import settings
+
+# get current file path 
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+engine = chess.engine.SimpleEngine.popen_uci(dir_path + "/../stockfish_engine/stockfish")
+easy_bot = chess.engine.SimpleEngine.popen_uci(dir_path + "/../stockfish_engine/stockfish")
+easy_bot.configure({"UCI_LimitStrength": True, "UCI_Elo": 1350})
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -125,8 +142,44 @@ class UserAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        print(settings.MEDIA_ROOT)
         user = User.objects.get(username=request.user.username)
-        return Response({'username': user.username, 'email': user.email, 'country': user.country})
+        # get all the completed games of the user
+        completed_user_games = ChessGame.objects.filter(player=user, is_completed=True)
+
+        return Response({'username': user.username, 'email': user.email, 'country': user.country, 'status': user.status, 'games': completed_user_games.values('color', 'bot_difficulty', 'is_won', 'start_time', 'moves', 'state', 'id')})
+    
+class UserUpdateAPIView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        # Check if the request if for updating status 
+        if request.data.get('status'):
+            user = User.objects.get(username=request.user.username)
+            user.status = request.data.get('status')
+            user.save()
+            return Response({'status': user.status})
+        
+        # Check if the request if for updating profile picture
+        if request.data.get('profile_picture'):
+            user = User.objects.get(username=request.user.username)
+            user.profile_picture = request.data.get('profile_picture')
+            user.save()
+            return Response({'profile_picture': user.profile_picture})
+        
+
+def image_view(request, image_name):
+    # Construct the path to the image file
+    image_path = os.path.join(settings.BASE_DIR, '.', 'images', image_name)
+    print(image_path)
+    # Check if the image file exists
+    if os.path.exists(image_path):
+        # Serve the image file using FileResponse
+        return FileResponse(open(image_path, 'rb'))
+
+    # Return a 404 response if the image file doesn't exist
+    return HttpResponseNotFound()
 
 class ChessStatisticsAPIView(APIView):
 
@@ -142,3 +195,214 @@ class ChessStatisticsAPIView(APIView):
             'games_drawn':  stats.games_drawn,
             'elo_rating': stats.elo_rating
         })
+    
+class NewChessGameAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        print(request.data)
+        user = User.objects.get(username=request.user.username)
+        # Get the bot difficulty from the request data
+        bot_difficulty = request.data.get('bot_difficulty') 
+        # Get player color 
+        color = request.data.get('color') 
+        # Get time control
+        time_control = request.data.get('time_control')
+        # Set bot and player remaining time to time control
+        bot_remaining_time = datetime.timedelta(minutes=int(time_control))
+        player_remaining_time = datetime.timedelta(minutes=int(time_control))
+        # Virtual time of last move
+        last_move_time = datetime.datetime.now()
+
+        # Create a new chess game
+        chess_game = ChessGame.objects.create(player=user, bot_difficulty=bot_difficulty, color=color, time_control=time_control, bot_remaining_time=bot_remaining_time, player_remaining_time=player_remaining_time, last_move_time=last_move_time)
+        return Response({'game_id': chess_game.id})
+    
+class ChessGameDeleteAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, game_id):
+        token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        try:
+            # Check if the token is valid and get the user
+            token_obj = Token.objects.get(key=token)
+            user = token_obj.user
+            game = ChessGame.objects.get(id=game_id ,player=user)
+            game.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ChessGame.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+class ChessGameStateAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, game_id):
+        token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        try:
+            # Check if the token is valid and get the user
+            token_obj = Token.objects.get(key=token)
+            user = token_obj.user
+            game = get_object_or_404(ChessGame, id=game_id, player=user)
+            # player stats
+            player_stats = ChessGameStatistics.objects.get(user=user)
+            player_elorating = player_stats.elo_rating
+            player_username = user.username
+            player_avatar = user.avatar.url
+            player_remaining_time = game.player_remaining_time
+            bot_remaining_time = game.bot_remaining_time
+            is_game_complete = game.is_completed
+            reason = game.reason
+            is_won = game.is_won
+            return Response({'state': game.state, 'color': game.color, 'bot': game.bot_difficulty, 
+                             'time_control': game.time_control, 'player_username': player_username, 'player_elorating': player_elorating, 
+                             'player_avatar': player_avatar, 'player_remaining_time': player_remaining_time, 'bot_remaining_time': bot_remaining_time,
+                             'is_game_complete': is_game_complete, 'reason': reason, 'is_won': is_won})
+        
+        except (Token.DoesNotExist, ChessGame.DoesNotExist):
+            return Response(status=401)
+        
+def get_bot_move(fen, difficulty):
+    board = chess.Board(fen)
+    # Set the ply (the number of moves to look ahead) based on the difficulty level
+    if difficulty == 1:
+        result = easy_bot.play(board, chess.engine.Limit(depth=1, nodes=1))
+        # wait a certain amount of time before making the move
+        time.sleep(3)
+
+    return result.move
+
+def apply_move(game, move):
+    board = chess.Board(game)
+    board.push(move)
+    return board.fen()
+
+class ChessGameMoveAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, game_id):
+        # store the time of the request
+        request_time = datetime.datetime.now()
+        token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        try:
+            token_obj = Token.objects.get(key=token)
+            user = token_obj.user
+            game = get_object_or_404(ChessGame, id=game_id, player=user)
+            board = chess.Board(game.state)
+
+            # Get current player that needs to make a move
+            current_turn = board.turn
+            # false is black and true is white
+            player_color = game.color
+            player_turn = True if player_color == 'w' else False
+            # Special flag in request if it's to the bot to start the game
+            if request.data.get('start_game') and player_turn is False:
+                bot_move = get_bot_move(game.state, game.bot_difficulty)
+                board.push(bot_move)
+                game.state = board.fen()
+                game.save()
+                return Response({'state': game.state})
+
+            from_square = request.data.get('from')
+            to_square = request.data.get('to')
+            move = chess.Move.from_uci(from_square + to_square)
+
+            from django.utils.timezone import make_aware
+            # Check if the move is legal and if it is the player's turn
+            if move in list(board.legal_moves) and current_turn == player_turn:
+                # print how long it takes to get to this part of code 
+                request_time = make_aware(request_time, datetime.timezone.utc)
+                #update player elapsed time 
+                elapsed_time_since_last_move = request_time - game.last_move_time
+                # Convert the time difference to timedelta with minutes and seconds
+                total_seconds = elapsed_time_since_last_move.total_seconds()
+                # Create a new timedelta object with the calculated time difference
+                time_difference = datetime.timedelta(seconds=total_seconds)
+                # Update the player remaining time
+                game.player_remaining_time -= time_difference
+                game.last_move_time = request_time
+                # if the player runs out of time, the game is over
+                if game.player_remaining_time.total_seconds() <= 0:
+                    game.player_remaining_time = datetime.timedelta(seconds=0, milliseconds=0, microseconds=0)
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'time limit'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+
+                board.push(move)
+                game.moves += 1
+                game.state = board.fen()
+                game.save()
+
+                # if checkmate, the game is over
+                if board.is_checkmate():
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'checkmate'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+
+                # elif stalemate, the game is over
+                elif board.is_stalemate():
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'stalemate'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+
+
+                bot_move = get_bot_move(game.state, game.bot_difficulty)
+                # check if capture
+                captured = False
+                if board.is_capture(bot_move):
+                    captured = True
+
+                #update bot elapsed time
+                elapsed_time_since_last_move =make_aware(datetime.datetime.now(), datetime.timezone.utc) - game.last_move_time
+                # Convert the time difference to timedelta with minutes and seconds
+                total_seconds = elapsed_time_since_last_move.total_seconds()
+                # Create a new timedelta object with the calculated difference
+                time_difference = datetime.timedelta(seconds=total_seconds)
+                # Update the bot remaining time
+                game.bot_remaining_time -= time_difference
+                game.last_move_time += time_difference
+
+                # if the bot runs out of time, the game is over
+                if game.bot_remaining_time.total_seconds() <= 0:
+                    game.bot_remaining_time =  datetime.timedelta(seconds=0, milliseconds=0, microseconds=0)
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'time limit'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+
+                board.push(bot_move)
+                game.moves += 1
+                game.state = board.fen()
+                game.save()
+
+                # if checkmate, the game is over
+                if board.is_checkmate():
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'checkmate'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+                
+                # elif stalemate, the game is over
+                elif board.is_stalemate():
+                    game.is_completed = True
+                    game.end_time = request_time
+                    game.reason = 'stalemate'
+                    game.save()
+                    return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
+
+                return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time, 'captured': captured})
+            else:
+                return Response({'status': 'illegal', 'state': game.state}, status=status.HTTP_200_OK)
+        except (Token.DoesNotExist, ChessGame.DoesNotExist):
+            return Response(status=401)
+
+
+
+
