@@ -40,6 +40,17 @@ CORS_ALLOW_CREDENTIALS = False
 """
 
 CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = [
+    "localhost", 
+    "46.101.210.155"
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+    "http://46.101.210.155:3000",
+    "http://localhost:8000",
+    "http://46.101.210.155:8000",
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
   'accept',
