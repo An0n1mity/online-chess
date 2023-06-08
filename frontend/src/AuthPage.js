@@ -97,7 +97,6 @@ class AuthPage extends Component {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
         }
 
       }).then(response => {
