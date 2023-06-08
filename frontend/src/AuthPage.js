@@ -12,7 +12,7 @@ class PasswordInput extends Component {
     super(props);
     this.state = {
       password: "",
-      showPassword: false
+      showPassword: false,
       IP: "",
     };
   }
