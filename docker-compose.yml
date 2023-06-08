@@ -37,16 +37,16 @@ services:
       - app-network
 
   nginx:
-    build:
-      context: ./nginx
+    image: nginx:latest
     ports:
       - 80:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - django
       - react
-      - redis
+      - django
+    networks:
+      - app-network
 
 
 networks:
