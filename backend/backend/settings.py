@@ -26,6 +26,15 @@ SECRET_KEY = 'django-insecure-64mn-29l9ddgk1ttcnndmtqqd-(ka%chc0$hr2e+^*&1coju65
 DEBUG = True
 
 # Application definition
+CORS_ORIGIN_ALLOW_ALL = True
+ALLOWED_HOSTS = [
+    "localhost", 
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost", 
+]
+CORS_ALLOW_CREDENTIALS = False
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'test_',
     'corsheaders',
+    'rest_framework',
     'rest_framework.authtoken',
     'django_extensions',
     'channels',
@@ -124,17 +134,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
-ALLOWED_HOSTS = ['*']
 
-
-CSRF_TRUSTED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000", 
-        "http://127.0.0.1:8000",
-]
 
 # REST FRAMEWORK
 REST_FRAMEWORK = {
