@@ -29,7 +29,7 @@ services:
   celery:
     build:
       context: ./backend  # Path to the Django project directory
-    command: celery -A backend worker -l INFO
+    command: celery -A backend worker
     depends_on:
       - django
       - redis
