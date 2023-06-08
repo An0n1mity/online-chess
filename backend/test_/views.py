@@ -245,6 +245,7 @@ class NewChessGameAPIView(APIView):
 
         # Create a new chess game
         chess_game = ChessGame.objects.create(player=user, bot_difficulty=bot_difficulty, color=color, time_control=time_control, bot_remaining_time=bot_remaining_time, player_remaining_time=player_remaining_time, last_move_time=last_move_time)
+        chess_game.save()
         # Setup the worker to update player 
         update_player_remaining_time.delay(chess_game.id)
         
