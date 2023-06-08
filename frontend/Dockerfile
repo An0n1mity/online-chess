@@ -1,11 +1,11 @@
 # Use an official Node.js runtime as the base image
-FROM node:14
+FROM node:16-alpine 
 
 # Set the working directory in the container
 WORKDIR /frontend
 
 # Copy the package.json and package-lock.json files to the working directory
-COPY package*.json ./
+COPY . .
 
 # Install dependencies (npm ci makes sure the exact versions in the lockfile gets installed)
 RUN npm ci 
@@ -22,4 +22,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Serve the React app using a lightweight web server
-CMD ["npm", "start"]
+CMD [ "npx", "serve", "build" ]
