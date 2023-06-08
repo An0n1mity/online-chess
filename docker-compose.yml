@@ -29,12 +29,27 @@ services:
   celery:
     build:
       context: ./backend  # Path to the Django project directory
-    command: celery -A backend worker
+    command: celery -A backend worker 
     depends_on:
       - django
       - redis
     networks:
       - app-network
+
+      version: '3'
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - django
+      - react
+      - redis
+
 
 networks:
   app-network:
