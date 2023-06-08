@@ -4,4 +4,3 @@ frontend/public/
 frontend/README.md
 __pycache__
 db.sqlite3
-manage.py
