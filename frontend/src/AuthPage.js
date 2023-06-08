@@ -90,12 +90,16 @@ class AuthPage extends Component {
 	    
       axios.post('http://localhost:8000/api/register/', {
 	    user:{
-		username: username,
-		email: email,
-		password: password
-	    }
-	    })
-	    .then(response => {
+          username: username,
+          email: email,
+          password: password
+        }
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+
+      }).then(response => {
 		console.log(response)
 	    })
 	    .catch(error => {
@@ -104,12 +108,16 @@ class AuthPage extends Component {
 	  });
     }
     else if (this.state.currentView === "logIn") {
-      axios.post('http://localhost:8000/api/login/', {
-	    user:{
-		username: username,
-		password: password
-	    }
-	    })
+      axios.post('http://localhost:8000/api/login', {
+        user: {
+          username: username,
+          password: password
+        }
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 	    .then(response => {
 		console.log(response)
 		if(response.status === 200) {
