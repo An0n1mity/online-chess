@@ -13,6 +13,7 @@ class PasswordInput extends Component {
     this.state = {
       password: "",
       showPassword: false
+      IP: "",
     };
   }
 
@@ -26,6 +27,15 @@ class PasswordInput extends Component {
   toggleShowPassword = () => {
     this.setState(prevState => ({ showPassword: !prevState.showPassword }));
   };
+
+  // Fetch IP address of the user
+  componentDidMount() {
+    fetch("https://api.ipify.org/?format=json")
+      .then(response => response.json())
+      .then(data => this.setState({ IP: data.ip }));
+    console.log(this.state.IP);
+  }
+
 
   render() {
     const { password, showPassword } = this.props;
@@ -92,7 +102,9 @@ class AuthPage extends Component {
 	    user:{
           username: username,
           email: email,
-          password: password
+          password: password,
+          // User IP address
+          ip: "
         }
       }, {
         headers: {

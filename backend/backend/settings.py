@@ -29,10 +29,12 @@ DEBUG = True
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = [
     "localhost", 
+    "46.101.210.155"
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost", 
+    "http://46.101.210.155"
 ]
 CORS_ALLOW_CREDENTIALS = False
 
