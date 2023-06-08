@@ -106,7 +106,6 @@ class AuthPage extends Component {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Origin': 'http://46.101.210.155:3000',
         }
 
       }).then(response => {
@@ -118,7 +117,7 @@ class AuthPage extends Component {
 	  });
     }
     else if (this.state.currentView === "logIn") {
-      axios.post('http://46.101.210.155:8000/api/login', {
+      axios.post('http://localhost:8000/api/login', {
         user: {
           username: username,
           password: password
