@@ -70,11 +70,8 @@ class RegistrationAPIView(APIView):
 
         # Use geoip2 to get the country from the IP address
         # if local IP address, use 'US' as default
-        if user['ip'] == '127.0.0.1':
-            country = 'US'
-        else:
-            geo = GeoIP2()
-            country = geo.country_code(user['ip'])
+        geo = GeoIP2()
+        country = geo.country_code(user['ip'])
 
         # Add the country to the user data
         user['country'] = country
@@ -84,7 +81,7 @@ class RegistrationAPIView(APIView):
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers={'Access-Control-Allow-Origin': '*'})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except:
             # Check if serialize errors are related to the username or the email 
             try:

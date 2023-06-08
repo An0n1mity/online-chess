@@ -51,7 +51,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://46.101.210.155:8000",
 ]
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = [
   'accept',
   'accept-encoding',
