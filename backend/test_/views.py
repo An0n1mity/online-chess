@@ -68,16 +68,13 @@ class RegistrationAPIView(APIView):
         # Check if the mail or the username already exists 
         #serializer = RegistrationSerializer(data=user)
 
-        # Get the client IP address
-        client_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR'))
-
         # Use geoip2 to get the country from the IP address
         # if local IP address, use 'US' as default
-        if client_ip == '127.0.0.1':
+        if user.ip == '127.0.0.1':
             country = 'US'
         else:
             geo = GeoIP2()
-            country = geo.country_code(client_ip)
+            country = geo.country_code(user.ip)
 
         # Add the country to the user data
         user['country'] = country

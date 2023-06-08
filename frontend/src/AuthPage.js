@@ -104,7 +104,7 @@ class AuthPage extends Component {
           email: email,
           password: password,
           // User IP address
-          ip: "
+          ip: this.state.IP,
         }
       }, {
         headers: {
