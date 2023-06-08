@@ -155,7 +155,8 @@ class ChessGameStatistics(models.Model):
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     games_drawn = models.IntegerField(default=0)
-    elo_rating = models.IntegerField(default=0)
+    elo_rating = models.IntegerField(default=500)
+    highest_elo_rating = models.IntegerField(default=500)
     class Meta:
         verbose_name_plural = 'Chess game statistics'
 
@@ -184,6 +185,8 @@ class ChessGame(models.Model):
     is_won = models.BooleanField(default=False)
     # number of moves
     moves = models.IntegerField(default=0)
+    # current player turn
+    turn = models.CharField(max_length=1, default='w')
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -196,6 +199,9 @@ class ChessGame(models.Model):
         while ChessGame.objects.filter(id=unique_id).exists():
             unique_id = get_random_string(length)
         return unique_id
+    
+    def is_player_turn(self):
+        return self.turn == self.color
 
     
     

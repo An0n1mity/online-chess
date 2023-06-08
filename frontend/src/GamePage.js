@@ -66,6 +66,7 @@ function Stats(props) {
     // Stats for player or bot based on id 
     const [type, setType] = useState(props.id === "player-stats" ? "player" : "bot");
     const [remainingTime, setRemainingTime] = useState(time_seconds_to_date(props.remainingTime));
+    const [gameId, setGameId] = useState(props.gameId);
 
     // use effect hook to handle resize of the board
     useEffect(() => {
@@ -99,13 +100,40 @@ function Stats(props) {
     useEffect(() => {
         let timer = null;
 
+
+        const fetchRemainingTime = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/game/${gameId}/state`, {
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem('token')}`,
+                    },
+                });
+                const data = await response.json();
+                if (type === 'player') {
+                    setRemainingTime(time_seconds_to_date(data.player_remaining_time));
+                } else {
+                    setRemainingTime(time_seconds_to_date(data.bot_remaining_time));
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
         if (!props.stopClock && !props.gameOver) {
             timer = setInterval(() => {
                 const time = new Date(remainingTime.getTime() - 1000);
                 setRemainingTime(time);
 
+                // Every 5 seconds, fetch the time from game state
+                if (time.getSeconds() % 5 === 0) {
+                    fetchRemainingTime();
+                }
+
+                console.log(time.getTime());
+
                 // If time is up, handle game over
                 if (time.getTime() <= 0) {
+                    setRemainingTime(time_seconds_to_date(0));
                     props.handleGameOver('time limit');
                 }
             }, 1000);
@@ -398,11 +426,11 @@ function Game() {
         return (
             < div className="container" >
                 {gameOver && showPopup && <Popup type={playerWon} />}
-                <Stats id="bot-stats" avatar={level_to_avatar(botDifficulty)} name={level_to_name(botDifficulty)} elo={level_to_elo(botDifficulty)} remainingTime={botRemainingTime} stopClock={stopBotClock} handleGameOver={handleGameOver} gameOver={gameOver} />
+                <Stats id="bot-stats" avatar={level_to_avatar(botDifficulty)} name={level_to_name(botDifficulty)} elo={level_to_elo(botDifficulty)} remainingTime={botRemainingTime} stopClock={stopBotClock} handleGameOver={handleGameOver} gameOver={gameOver} gameId={gameId} />
                 <div className="board-container">
                     {game && <Chessboard position={game.fen()} onPieceDrop={onDrop} boardOrientation={to_color(playerColor)} />}
                 </div>
-                <Stats id="player-stats" avatar={playerAvatar} name={playerName} elo={playerElo} remainingTime={playerRemainingTime} stopClock={stopPlayerClock} handleGameOver={handleGameOver} gameOver={gameOver} />
+                <Stats id="player-stats" avatar={playerAvatar} name={playerName} elo={playerElo} remainingTime={playerRemainingTime} stopClock={stopPlayerClock} handleGameOver={handleGameOver} gameOver={gameOver} gameId={gameId} />
             </div >
         );
     }

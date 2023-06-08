@@ -162,5 +162,15 @@ GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
 print(GEOIP_PATH)
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
+# Celery conf
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
+
+CELERY_BEAT_SCHEDULE = {
+    'update_player_remaining_time': {
+        'task': 'backend.tasks.update_player_remaining_time',
+        'schedule': 1,
+    },
+}
 

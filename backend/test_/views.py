@@ -28,6 +28,28 @@ import datetime
 
 from django.http import FileResponse, HttpResponseNotFound
 from django.conf import settings
+from celery import shared_task
+from django.utils import timezone
+
+
+@shared_task
+def update_player_remaining_time(game_id):
+    game = ChessGame.objects.get(id=game_id)
+    
+    while not game.is_completed:
+        if game.is_player_turn():
+            # Calculate the elapsed time since the last update minus 1 second
+            game.player_remaining_time -= datetime.timedelta(seconds=1)
+            print(game.player_remaining_time)
+            if game.player_remaining_time.total_seconds() <= 0:
+                # Game over, handle accordingly
+                game.is_completed = True
+                game.end_time = timezone.now()
+                game.reason = 'time limit'
+
+            game.save()    
+            # Sleep for a short interval before the next update
+            time.sleep(1)  # Adjust the interval as needed
 
 # get current file path 
 import os
@@ -147,7 +169,8 @@ class UserAPIView(APIView):
         # get all the completed games of the user
         completed_user_games = ChessGame.objects.filter(player=user, is_completed=True)
 
-        return Response({'username': user.username, 'email': user.email, 'country': user.country, 'status': user.status, 'games': completed_user_games.values('color', 'bot_difficulty', 'is_won', 'start_time', 'moves', 'state', 'id')})
+        return Response({'username': user.username, 'email': user.email, 'country': user.country, 'status': user.status, 
+                         'games': completed_user_games.values('color', 'bot_difficulty', 'is_won', 'start_time', 'moves', 'state', 'id')})
     
 class UserUpdateAPIView(APIView):
 
@@ -186,15 +209,21 @@ class ChessStatisticsAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        user = User.objects.get(username=request.user.username)
-        stats = ChessGameStatistics.objects.get(user=user)
-        return Response({
-            'games_played': stats.games_played,
-            'games_won': stats.games_won,
-            'games_lost': stats.games_lost,
-            'games_drawn':  stats.games_drawn,
-            'elo_rating': stats.elo_rating
-        })
+        token = request.headers.get('Authorization').split(' ')[1]
+        try:
+            token_obj = Token.objects.get(key=token)
+            user = token_obj.user
+            stats = ChessGameStatistics.objects.get(user=user)
+            return Response({
+                'games_played': stats.games_played,
+                'games_won': stats.games_won,
+                'games_lost': stats.games_lost,
+                'games_drawn':  stats.games_drawn,
+                'elo_rating': stats.elo_rating,
+                'highest_elo_rating': stats.highest_elo_rating,
+            })
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
     
 class NewChessGameAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -216,6 +245,9 @@ class NewChessGameAPIView(APIView):
 
         # Create a new chess game
         chess_game = ChessGame.objects.create(player=user, bot_difficulty=bot_difficulty, color=color, time_control=time_control, bot_remaining_time=bot_remaining_time, player_remaining_time=player_remaining_time, last_move_time=last_move_time)
+        # Setup the worker to update player 
+        update_player_remaining_time.delay(chess_game.id)
+        
         return Response({'game_id': chess_game.id})
     
 class ChessGameDeleteAPIView(APIView):

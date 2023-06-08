@@ -120,3 +120,15 @@
     height: 55px;
     background-color: #fff;
 }
+
+/* Adjust container width for screens below 768px */
+@media (max-width: 768px) {
+    .container {
+      width: 100%;
+      margin-left: 0;
+    }  
+    /*popup width*/
+    .popup {
+        width: 60%;
+    }  
+  }

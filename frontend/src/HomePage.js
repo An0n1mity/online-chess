@@ -419,6 +419,49 @@ const HomeCompletedGames = () => {
 	);
 };
 
+// Component to manage the statistics of the user Highest elo/ Current elo/ Games played/ Wins/ Losses/ Draws
+const HomeBaseHeaderUserStatistics = () => {
+
+	// Fetch statistics from the server 
+	const [userStatistics, setUserStatistics] = useState(null);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			axios.get('http://localhost:8000/api/chess_stats', {
+				headers: {
+					Authorization: `Token ${localStorage.getItem('token')}`
+				}
+			}).then((response) => {
+				console.log(response.data);
+				setUserStatistics(response.data);
+			}).catch((error) => {
+				console.log(error);
+			});
+		};
+		fetchData();
+	}, []);
+
+	return (
+		<div className="home-base-header-user-statistics">
+			<table className="home-base-header-user-statistics-table">
+				<tr>
+					<th>Highest elo</th>
+					<th>Current elo</th>
+					<th>Games</th>
+					<th>W/D/L</th>
+				</tr>
+				<tr>
+					<td>{userStatistics ? userStatistics.highest_elo_rating : "Loading..."}</td>
+					<td>{userStatistics ? userStatistics.elo_rating : "Loading..."}</td>
+					<td>{userStatistics ? userStatistics.games_played : "Loading..."}</td>
+					<td className='td-w-d-l'>{userStatistics ? <p id="wins">{userStatistics.games_won}</p> : "Loading..."}<p>/</p>{userStatistics ? <p id="draws">{userStatistics.games_drawn}</p> : "Loading..."}<p>/</p>{userStatistics ? <p id="losses">{userStatistics.games_lost}</p> : "Loading..."}</td>
+				</tr>
+			</table>
+		</div>
+	);
+};
+
+
 
 const HomeBase = () => {
 	const [userDataResponse, setUserData] = useState(null);
@@ -442,6 +485,7 @@ const HomeBase = () => {
 						   country={userDataResponse ? userDataResponse.country : "Loading..."}
 					   />
 					   <HomeCompletedGames />
+					   <HomeBaseHeaderUserStatistics />
 	    </header>
 	</div>
 	);
