@@ -2,37 +2,33 @@ version: '3'
 services:
   django:
     build:
-      context: ./backend # Path to the Django project directory
-    ports:
-      - 8000:8000
-    depends_on:
-      - react
-      - redis
+      context: ./backend
     networks:
       - app-network
-
   react:
     build:
-      context: ./frontend  # Path to the React project directory
-    ports:
-      - 3000:3000
+      context: ./frontend
     networks:
       - app-network
-
   redis:
     image: redis:latest
-    ports:
-      - 6379:6379
     networks:
       - app-network
-
   celery:
     build:
-      context: ./backend  # Path to the Django project directory
+      context: ./backend
     command: celery -A backend worker -l INFO
+    networks:
+      - app-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
+      - react
       - django
-      - redis
     networks:
       - app-network
 
