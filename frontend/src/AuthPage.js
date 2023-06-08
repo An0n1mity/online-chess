@@ -13,7 +13,6 @@ class PasswordInput extends Component {
     this.state = {
       password: "",
       showPassword: false,
-      IP: "",
     };
   }
 
@@ -27,15 +26,6 @@ class PasswordInput extends Component {
   toggleShowPassword = () => {
     this.setState(prevState => ({ showPassword: !prevState.showPassword }));
   };
-
-  // Fetch IP address of the user
-  componentDidMount() {
-    fetch("https://api.ipify.org/?format=json")
-      .then(response => response.json())
-      .then(data => this.setState({ IP: data.ip }));
-    console.log(this.state.IP);
-  }
-
 
   render() {
     const { password, showPassword } = this.props;
@@ -74,10 +64,18 @@ class AuthPage extends Component {
 	login: false,
 	currentView: props.currentView,
 	errorMessage: '',
+      ip: '',
     }
     this.handleChange = this.handleChange.bind(this)
   }
 
+  // Fetch IP address of the user
+  componentDidMount() {
+    fetch("https://api.ipify.org/?format=json")
+      .then(response => response.json())
+      .then(data => this.setState({ IP: data.ip }));
+    console.log(this.state.ip);
+  }
 
   handlePasswordChange = (password) => {
     this.setState({ password });
@@ -103,8 +101,7 @@ class AuthPage extends Component {
           username: username,
           email: email,
           password: password,
-          // User IP address
-          ip: this.state.IP,
+          ip: this.state.ip
         }
       }, {
         headers: {
@@ -163,6 +160,7 @@ class AuthPage extends Component {
       this.setState({
       password: '',
       currentView: view,
+        ip: 
     })
   }
 
