@@ -92,12 +92,12 @@ class RegistrationAPIView(APIView):
             # Check if serialize errors are related to the username or the email 
             try:
                 if serializer.errors['username'][0].code == 'unique':
-                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST, headers={'Access-Control-Allow-Origin': '*'})
             except:
                 pass 
             try:
                 if serializer.errors['email'][0].code == 'unique':
-                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST, headers={'Access-Control-Allow-Origin': '*'})
             except:
                 pass
            # Check if serialize errors are related to the password 
