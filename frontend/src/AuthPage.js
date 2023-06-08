@@ -96,7 +96,7 @@ class AuthPage extends Component {
 	    return
 	}
 	    
-      axios.post('http://127.0.0.1:8000/api/register', {
+      axios.post('http://46.101.210.155:8000/api/register', {
 	    user:{
           username: username,
           email: email,
@@ -106,7 +106,7 @@ class AuthPage extends Component {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Origin': 'http://localhost:3000',
+          'Origin': 'http://46.101.210.155:3000',
         }
 
       }).then(response => {
@@ -118,7 +118,7 @@ class AuthPage extends Component {
 	  });
     }
     else if (this.state.currentView === "logIn") {
-      axios.post('http://localhost:8000/api/login', {
+      axios.post('http://46.101.210.155:8000/api/login', {
         user: {
           username: username,
           password: password

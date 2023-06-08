@@ -27,13 +27,6 @@ DEBUG = True
 
 # Application definition
 CORS_ORIGIN_ALLOW_ALL = True
-ALLOWED_HOSTS = [
-    "localhost", 
-]
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost", 
-]
 CORS_ALLOW_CREDENTIALS = False
 
 INSTALLED_APPS = [
