@@ -36,8 +36,6 @@ services:
     networks:
       - app-network
 
-      version: '3'
-
   nginx:
     build:
       context: ./nginx
