@@ -33,8 +33,8 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost", 
-    "http://46.101.210.155"
+    "http://localhost:3000",
+    "http://46.101.210.155:3000",
 ]
 CORS_ALLOW_CREDENTIALS = False
 

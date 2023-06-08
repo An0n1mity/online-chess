@@ -96,7 +96,7 @@ class AuthPage extends Component {
 	    return
 	}
 	    
-      axios.post('http://46.101.210.155:8000/api/register', {
+      axios.post('http://localhost:8000/api/register', {
 	    user:{
           username: username,
           email: email,
@@ -106,7 +106,6 @@ class AuthPage extends Component {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Origin': 'http://localhost:3000',
         }
 
       }).then(response => {
