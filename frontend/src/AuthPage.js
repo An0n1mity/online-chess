@@ -159,8 +159,7 @@ class AuthPage extends Component {
   changeView = (view) => {
       this.setState({
       password: '',
-      currentView: view,
-        ip: 
+        currentView: view,
     })
   }
 
