@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser, PermissionsMixin
-from rest_framework_simplejwt.tokens import RefreshToken
-import jwt
 from django.conf import settings
+from django.utils.crypto import get_random_string
 
 from datetime import datetime, timedelta
 class UserManager(BaseUserManager):
@@ -42,6 +41,15 @@ class UserManager(BaseUserManager):
 
         return user
 
+import os
+def get_image_upload_path(instance, filename):
+    # Get the filename and extension
+    _, ext = os.path.splitext(filename)
+    # Generate a unique filename for the uploaded image
+    unique_filename = f"{instance.pk}{ext}"
+    # Return the upload path relative to the project directory
+    return os.path.join("images", unique_filename)
+
 class User(AbstractBaseUser, PermissionsMixin):
     # Each `User` needs a human-readable unique identifier that we can use to
     # represent the `User` in the UI. We want to index this column in the
@@ -56,6 +64,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Add the country field 
     country = models.CharField(max_length=255, blank=True, null=True)
+
+    # Avatar
+    avatar = models.ImageField(upload_to=get_image_upload_path, default="images/basic_avatar.png")
 
     # When a user no longer wishes to use our platform, they may try to delete
     # their account. That's a problem for us because the data we collect is
@@ -77,6 +88,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True)
 
     # More fields required by Django when specifying a custom user model.
+    status = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='images/', default='images/basic_avatar.png')
 
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
@@ -142,6 +155,53 @@ class ChessGameStatistics(models.Model):
     games_won = models.IntegerField(default=0)
     games_lost = models.IntegerField(default=0)
     games_drawn = models.IntegerField(default=0)
-    elo_rating = models.IntegerField(default=0)
+    elo_rating = models.IntegerField(default=500)
+    highest_elo_rating = models.IntegerField(default=500)
     class Meta:
         verbose_name_plural = 'Chess game statistics'
+
+class ChessGame(models.Model):
+    id = models.CharField(max_length=10, primary_key=True, unique=True)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    bot_difficulty = models.IntegerField(default=1)
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+    is_completed = models.BooleanField(default=False)
+    # reason for game completion
+    reason = models.CharField(max_length=100, blank=True, null=True)
+    # player color
+    color = models.CharField(max_length=1, default='w')
+    # default fen string for the starting position
+    state = models.CharField(max_length=100, default='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+    #time control
+    time_control = models.CharField(max_length=10, default='None')
+    # player elapsed time 
+    player_remaining_time = models.DurationField(null=True, blank=True)
+    # bot elasped time 
+    bot_remaining_time = models.DurationField(null=True, blank=True)
+    #last move time
+    last_move_time = models.DateTimeField(null=True, blank=True)
+    # is the player wined or lost 
+    is_won = models.BooleanField(default=False)
+    # number of moves
+    moves = models.IntegerField(default=0)
+    # current player turn
+    turn = models.CharField(max_length=1, default='w')
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self._generate_unique_id()
+        super().save(*args, **kwargs)
+
+    def _generate_unique_id(self):
+        length = 10
+        unique_id = get_random_string(length)
+        while ChessGame.objects.filter(id=unique_id).exists():
+            unique_id = get_random_string(length)
+        return unique_id
+    
+    def is_player_turn(self):
+        return self.turn == self.color
+
+    
+    

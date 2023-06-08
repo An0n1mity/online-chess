@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, ChessGameStatistics
+from .models import User, ChessGameStatistics, ChessGame
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -93,3 +93,8 @@ class LoginSerializer(serializers.Serializer):
             "token": token.key,
             "country": user.country
         }
+
+class ChessGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChessGame
+        fields = '__all__'
