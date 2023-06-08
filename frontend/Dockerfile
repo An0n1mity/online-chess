@@ -8,12 +8,9 @@ WORKDIR /frontend
 COPY . .
 
 # Install dependencies (npm ci makes sure the exact versions in the lockfile gets installed)
-RUN npm ci 
+#RUN npm ci 
 # Build the app
-RUN npm run build
-
-# Copy the React project code to the working directory
-COPY . .
+#RUN npm run build
 
 # Build the React app for production
 RUN npm run build
