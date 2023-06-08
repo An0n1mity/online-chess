@@ -70,11 +70,11 @@ class RegistrationAPIView(APIView):
 
         # Use geoip2 to get the country from the IP address
         # if local IP address, use 'US' as default
-        if user.ip == '127.0.0.1':
+        if user['ip'] == '127.0.0.1':
             country = 'US'
         else:
             geo = GeoIP2()
-            country = geo.country_code(user.ip)
+            country = geo.country_code(user['ip'])
 
         # Add the country to the user data
         user['country'] = country
