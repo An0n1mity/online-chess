@@ -97,7 +97,6 @@ class AuthPage extends Component {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Origin': 'http://localhost:3000',
         }
 
       }).then(response => {
