@@ -87,7 +87,7 @@ class RegistrationAPIView(APIView):
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers={'Access-Control-Allow-Origin': '*'})
         except:
             # Check if serialize errors are related to the username or the email 
             try:
