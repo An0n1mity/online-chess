@@ -28,8 +28,11 @@ DEBUG = True
 # Application definition
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_PRIVATE_NETWORKS = True
+
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_',
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django_extensions',
