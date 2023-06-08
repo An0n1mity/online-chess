@@ -134,7 +134,7 @@ class AuthPage extends Component {
 
     }
     else if (this.state.currentView === "PWReset") {
-      axios.post('http://localhost:8000/auth/reset/', {
+      axios.post('http://localhost:8000/auth/reset', {
 	    email: email, 
 	    })
 	    .then(response => {
