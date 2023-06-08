@@ -193,7 +193,7 @@ const App = () => {
 	        <Routes>
 				<Route path="/" element={<Landing isAuthenticated={hasToken()} />} />
 				<Route path="/login" element={<AuthPage currentView="logIn" />} />
-				<Route path="/signup" element={<AuthPage currentView="signUp" />} />
+				<Route path="/register" element={<AuthPage currentView="signUp" />} />
 				<Route path='/home' element={<AuthWrapperHome isAuthenticated={isAuthenticated} />} />
 				<Route path="/bots" element={<BotsSelection />} />
 				<Route path="/game/:gameId" element={<Game />} />
