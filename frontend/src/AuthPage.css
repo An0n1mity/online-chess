@@ -14,6 +14,14 @@ fieldset {
     border-style: none;
 }
 
+ p {
+  color : #9e9d9c;
+}
+
+legend{
+  color : #9e9d9c;
+}
+
 ::placeholder {
 	color: #6d6b6a;
 	font-size: 16px;

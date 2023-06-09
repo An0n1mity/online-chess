@@ -1,4 +1,3 @@
-import react from 'react';
 import {Link} from 'react-router-dom';
 import './Navbar.css';
 
@@ -13,7 +12,7 @@ const AuthenticatedNavbar = () => {
 	    </Link>
         </div>
         <div className="navbar-buttons">
-          <Link to="/play">
+            <Link to="/bots">
             <button className="play-button">
 		<img className="play-button-img" src={require("./play-hand.png")} alt="play" />
 		Play 
@@ -36,7 +35,7 @@ const NonAuthenticatedNavbar = () => {
 	    </Link>
         </div>
         <div className="navbar-buttons">
-          <Link to="/play">
+             <Link to="/bots">
             <button className="play-button">
 		<img className="play-button-img" src={require("./play-hand.png")} alt="play" />
 		Play 

@@ -18,6 +18,9 @@ services:
       - 3000:3000
     networks:
       - app-network
+    volumes:
+      - './frontend/src:/frontend/src'
+    command: npm start
 
   redis:
     image: redis:latest

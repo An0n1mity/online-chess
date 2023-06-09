@@ -1,29 +1,20 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.utils.regex_helper import walk_to_end    
-from django.views.decorators.csrf import csrf_exempt
-import json 
+import os
 import chess
 import chess.engine
-from django.contrib.auth import get_user_model
-import django.contrib.auth as auth
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 from django.contrib.gis.geoip2 import GeoIP2
 from .models import User, ChessGameStatistics, ChessGame
 
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from .serializers import RegistrationSerializer, LoginSerializer, ChessGameSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
+from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from rest_framework.authtoken.models import Token
 import time
-import datetime 
+import datetime
 
 
 from django.http import FileResponse, HttpResponseNotFound
@@ -31,33 +22,42 @@ from django.conf import settings
 from celery import shared_task
 from django.utils import timezone
 
+from django.db import transaction
+
 
 @shared_task
 def update_player_remaining_time(game_id):
-    game = ChessGame.objects.get(id=game_id)
-    
-    while not game.is_completed:
-        if game.is_player_turn():
-            # Calculate the elapsed time since the last update minus 1 second
-            game.player_remaining_time -= datetime.timedelta(seconds=1)
-            print(game.player_remaining_time)
-            if game.player_remaining_time.total_seconds() <= 0:
-                # Game over, handle accordingly
-                game.is_completed = True
-                game.end_time = timezone.now()
-                game.reason = 'time limit'
+    while True:
+        with transaction.atomic():
+            game = ChessGame.objects.select_for_update().get(id=game_id)
 
-            game.save()    
-            # Sleep for a short interval before the next update
-            time.sleep(1)  # Adjust the interval as needed
+            if game.is_completed:
+                break
 
-# get current file path 
-import os
+            if game.is_player_turn():
+                # Calculate the elapsed time since the last update minus 1 second
+                game.player_remaining_time -= timezone.timedelta(seconds=1)
+
+                if game.player_remaining_time.total_seconds() <= 0:
+                    # Game over, handle accordingly
+                    game.is_completed = True
+                    game.end_time = timezone.now()
+                    game.reason = 'time limit'
+
+                game.save()
+
+        # Sleep for a short interval before the next update
+        time.sleep(1)  # Adjust the interval as needed
+
+# get current file path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-engine = chess.engine.SimpleEngine.popen_uci(dir_path + "/../stockfish_engine/stockfish")
-easy_bot = chess.engine.SimpleEngine.popen_uci(dir_path + "/../stockfish_engine/stockfish")
+engine = chess.engine.SimpleEngine.popen_uci(
+    dir_path + "/../stockfish_engine/stockfish")
+easy_bot = chess.engine.SimpleEngine.popen_uci(
+    dir_path + "/../stockfish_engine/stockfish")
 easy_bot.configure({"UCI_LimitStrength": True, "UCI_Elo": 1350})
+
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -65,49 +65,60 @@ class RegistrationAPIView(APIView):
 
     def post(self, request):
         user = request.data.get('user', {})
-        # Check if the mail or the username already exists 
-        #serializer = RegistrationSerializer(data=user)
 
         # Use geoip2 to get the country from the IP address
-        # if local IP address, use 'US' as default
         geo = GeoIP2()
         country = geo.country_code(user['ip'])
 
         # Add the country to the user data
         user['country'] = country
-        # Update the serializer with the country 
+        # Remove ip from the user data
+        user.pop('ip', None)
+        # Update the serializer with the country
         serializer = RegistrationSerializer(data=user)
-
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except:
-            # Check if serialize errors are related to the username or the email 
+            # Check if related to username
             try:
-                if serializer.errors['username'][0].code == 'unique':
-                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST, headers={'Access-Control-Allow-Origin': '*'})
-            except:
-                pass 
-            try:
-                if serializer.errors['email'][0].code == 'unique':
-                    return Response({'error': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST, headers={'Access-Control-Allow-Origin': '*'})
+                # if username is already taken
+                if serializer.errors['username'][0] == 'This field must be unique.':
+                    return Response({'error': 'Username is already taken'}, status=status.HTTP_400_BAD_REQUEST)
             except:
                 pass
-           # Check if serialize errors are related to the password 
-            try:    
-                if serializer.errors['password'][0].code == 'password_too_common':
-                    return Response({'error': 'Password is too common'}, status=status.HTTP_400_BAD_REQUEST)
-                elif serializer.errors['password'][0].code == 'password_too_short':
+            try:
+                # if username is too short
+                if serializer.errors['username'][0].code == 'Ensure this field has at least 3 characters.':
+                    return Response({'error': 'Username is too short'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+            # Check if related to email
+            try:
+                # if email is already taken
+                if serializer.errors['email'][0] == 'user with this email address already exists.':
+                    return Response({'error': 'Email is already taken'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+                
+            try:
+                # if email is invalid
+                if serializer.errors['email'][0].code == 'Enter a valid email address.':
+                    return Response({'error': 'Email is invalid'}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
+            # Check if related to password
+            try:
+                # if password is too short
+                if serializer.errors['password'][0].code == 'This password is too short. It must contain at least 8 characters.':
                     return Response({'error': 'Password is too short'}, status=status.HTTP_400_BAD_REQUEST)
-                elif serializer.errors['password'][0].code == 'password_too_similar':
-                    return Response({'error': 'Password is too similar to the username'}, status=status.HTTP_400_BAD_REQUEST)
-                elif serializer.errors['password'][0].code == 'password_entirely_numeric':
-                    return Response({'error': 'Password is entirely numeric'}, status=status.HTTP_400_BAD_REQUEST)
             except:
                 pass
 
-            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
@@ -120,7 +131,7 @@ class LoginAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             try:
-                # if username is empty 
+                # if username is empty
                 if serializer.errors['username'][0].code == 'blank':
                     return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
             except:
@@ -144,6 +155,7 @@ class LoginAPIView(APIView):
             except:
                 pass
 
+
 """
 The UserAPIView class is a Django Rest Framework class-based view that provides a way to retrieve basic information about the currently authenticated user.
 
@@ -153,6 +165,8 @@ Attributes:
 Methods:
     get: Handles GET requests to the view. Retrieves the user object of the currently authenticated user using the User.objects.get() method, and returns a JSON response containing the username and email of the user.
 """
+
+
 class UserAPIView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
@@ -161,30 +175,32 @@ class UserAPIView(APIView):
         print(settings.MEDIA_ROOT)
         user = User.objects.get(username=request.user.username)
         # get all the completed games of the user
-        completed_user_games = ChessGame.objects.filter(player=user, is_completed=True)
+        completed_user_games = ChessGame.objects.filter(
+            player=user, is_completed=True)
 
-        return Response({'username': user.username, 'email': user.email, 'country': user.country, 'status': user.status, 
+        return Response({'username': user.username, 'email': user.email, 'country': user.country, 'status': user.status,
                          'games': completed_user_games.values('color', 'bot_difficulty', 'is_won', 'start_time', 'moves', 'state', 'id')})
-    
+
+
 class UserUpdateAPIView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        # Check if the request if for updating status 
+        # Check if the request if for updating status
         if request.data.get('status'):
             user = User.objects.get(username=request.user.username)
             user.status = request.data.get('status')
             user.save()
             return Response({'status': user.status})
-        
+
         # Check if the request if for updating profile picture
         if request.data.get('profile_picture'):
             user = User.objects.get(username=request.user.username)
             user.profile_picture = request.data.get('profile_picture')
             user.save()
             return Response({'profile_picture': user.profile_picture})
-        
+
 
 def image_view(request, image_name):
     # Construct the path to the image file
@@ -197,6 +213,7 @@ def image_view(request, image_name):
 
     # Return a 404 response if the image file doesn't exist
     return HttpResponseNotFound()
+
 
 class ChessStatisticsAPIView(APIView):
 
@@ -218,7 +235,8 @@ class ChessStatisticsAPIView(APIView):
             })
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
+
 class NewChessGameAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -226,9 +244,9 @@ class NewChessGameAPIView(APIView):
         print(request.data)
         user = User.objects.get(username=request.user.username)
         # Get the bot difficulty from the request data
-        bot_difficulty = request.data.get('bot_difficulty') 
-        # Get player color 
-        color = request.data.get('color') 
+        bot_difficulty = request.data.get('bot_difficulty')
+        # Get player color
+        color = request.data.get('color')
         # Get time control
         time_control = request.data.get('time_control')
         # Set bot and player remaining time to time control
@@ -238,13 +256,15 @@ class NewChessGameAPIView(APIView):
         last_move_time = datetime.datetime.now()
 
         # Create a new chess game
-        chess_game = ChessGame.objects.create(player=user, bot_difficulty=bot_difficulty, color=color, time_control=time_control, bot_remaining_time=bot_remaining_time, player_remaining_time=player_remaining_time, last_move_time=last_move_time)
+        chess_game = ChessGame.objects.create(player=user, bot_difficulty=bot_difficulty, color=color, time_control=time_control,
+                                              bot_remaining_time=bot_remaining_time, player_remaining_time=player_remaining_time, last_move_time=last_move_time)
         chess_game.save()
-        # Setup the worker to update player 
+        # Setup the worker to update player
         update_player_remaining_time.delay(chess_game.id)
-        
+
         return Response({'game_id': chess_game.id})
-    
+
+
 class ChessGameDeleteAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -254,12 +274,13 @@ class ChessGameDeleteAPIView(APIView):
             # Check if the token is valid and get the user
             token_obj = Token.objects.get(key=token)
             user = token_obj.user
-            game = ChessGame.objects.get(id=game_id ,player=user)
+            game = ChessGame.objects.get(id=game_id, player=user)
             game.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ChessGame.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
+
 class ChessGameStateAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -280,14 +301,15 @@ class ChessGameStateAPIView(APIView):
             is_game_complete = game.is_completed
             reason = game.reason
             is_won = game.is_won
-            return Response({'state': game.state, 'color': game.color, 'bot': game.bot_difficulty, 
-                             'time_control': game.time_control, 'player_username': player_username, 'player_elorating': player_elorating, 
+            return Response({'state': game.state, 'color': game.color, 'bot': game.bot_difficulty,
+                             'time_control': game.time_control, 'player_username': player_username, 'player_elorating': player_elorating,
                              'player_avatar': player_avatar, 'player_remaining_time': player_remaining_time, 'bot_remaining_time': bot_remaining_time,
                              'is_game_complete': is_game_complete, 'reason': reason, 'is_won': is_won})
-        
+
         except (Token.DoesNotExist, ChessGame.DoesNotExist):
             return Response(status=401)
-        
+
+
 def get_bot_move(fen, difficulty):
     board = chess.Board(fen)
     # Set the ply (the number of moves to look ahead) based on the difficulty level
@@ -298,10 +320,19 @@ def get_bot_move(fen, difficulty):
 
     return result.move
 
+
 def apply_move(game, move):
     board = chess.Board(game)
     board.push(move)
     return board.fen()
+
+
+
+def board_turn_to_color(board_turn):
+    if board_turn == chess.WHITE:
+        return 'w'
+    else:
+        return 'b'
 
 class ChessGameMoveAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -316,16 +347,21 @@ class ChessGameMoveAPIView(APIView):
             game = get_object_or_404(ChessGame, id=game_id, player=user)
             board = chess.Board(game.state)
 
+            # Apply locking mechanism on the ChessGame object
+            game = ChessGame.objects.select_for_update().get(id=game_id, player=user)
+
             # Get current player that needs to make a move
             current_turn = board.turn
             # false is black and true is white
             player_color = game.color
             player_turn = True if player_color == 'w' else False
-            # Special flag in request if it's to the bot to start the game
-            if request.data.get('start_game') and player_turn is False:
+            # If player is black and game just started, make a bot move
+            if not player_turn and game.state == 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1':
                 bot_move = get_bot_move(game.state, game.bot_difficulty)
                 board.push(bot_move)
                 game.state = board.fen()
+                # update turn 
+                game.turn = board_turn_to_color(board.turn) 
                 game.save()
                 return Response({'state': game.state})
 
@@ -336,9 +372,9 @@ class ChessGameMoveAPIView(APIView):
             from django.utils.timezone import make_aware
             # Check if the move is legal and if it is the player's turn
             if move in list(board.legal_moves) and current_turn == player_turn:
-                # print how long it takes to get to this part of code 
+                # print how long it takes to get to this part of code
                 request_time = make_aware(request_time, datetime.timezone.utc)
-                #update player elapsed time 
+                # update player elapsed time
                 elapsed_time_since_last_move = request_time - game.last_move_time
                 # Convert the time difference to timedelta with minutes and seconds
                 total_seconds = elapsed_time_since_last_move.total_seconds()
@@ -349,7 +385,8 @@ class ChessGameMoveAPIView(APIView):
                 game.last_move_time = request_time
                 # if the player runs out of time, the game is over
                 if game.player_remaining_time.total_seconds() <= 0:
-                    game.player_remaining_time = datetime.timedelta(seconds=0, milliseconds=0, microseconds=0)
+                    game.player_remaining_time = datetime.timedelta(
+                        seconds=0, milliseconds=0, microseconds=0)
                     game.is_completed = True
                     game.end_time = request_time
                     game.reason = 'time limit'
@@ -359,6 +396,7 @@ class ChessGameMoveAPIView(APIView):
                 board.push(move)
                 game.moves += 1
                 game.state = board.fen()
+                game.turn = board_turn_to_color(board.turn)
                 game.save()
 
                 # if checkmate, the game is over
@@ -377,15 +415,15 @@ class ChessGameMoveAPIView(APIView):
                     game.save()
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
-
                 bot_move = get_bot_move(game.state, game.bot_difficulty)
                 # check if capture
                 captured = False
                 if board.is_capture(bot_move):
                     captured = True
 
-                #update bot elapsed time
-                elapsed_time_since_last_move =make_aware(datetime.datetime.now(), datetime.timezone.utc) - game.last_move_time
+                # update bot elapsed time
+                elapsed_time_since_last_move = make_aware(
+                    datetime.datetime.now(), datetime.timezone.utc) - game.last_move_time
                 # Convert the time difference to timedelta with minutes and seconds
                 total_seconds = elapsed_time_since_last_move.total_seconds()
                 # Create a new timedelta object with the calculated difference
@@ -396,7 +434,8 @@ class ChessGameMoveAPIView(APIView):
 
                 # if the bot runs out of time, the game is over
                 if game.bot_remaining_time.total_seconds() <= 0:
-                    game.bot_remaining_time =  datetime.timedelta(seconds=0, milliseconds=0, microseconds=0)
+                    game.bot_remaining_time = datetime.timedelta(
+                        seconds=0, milliseconds=0, microseconds=0)
                     game.is_completed = True
                     game.end_time = request_time
                     game.reason = 'time limit'
@@ -406,6 +445,7 @@ class ChessGameMoveAPIView(APIView):
                 board.push(bot_move)
                 game.moves += 1
                 game.state = board.fen()
+                game.turn = board_turn_to_color(board.turn)
                 game.save()
 
                 # if checkmate, the game is over
@@ -415,7 +455,7 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'checkmate'
                     game.save()
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
-                
+
                 # elif stalemate, the game is over
                 elif board.is_stalemate():
                     game.is_completed = True
@@ -429,7 +469,3 @@ class ChessGameMoveAPIView(APIView):
                 return Response({'status': 'illegal', 'state': game.state}, status=status.HTTP_200_OK)
         except (Token.DoesNotExist, ChessGame.DoesNotExist):
             return Response(status=401)
-
-
-
-

@@ -1,11 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import './Board.css';
 import './Player.css';
 import './AuthPage.css';
-import React, {Component} from 'react';
-import { useState } from "react";
-import { Chessboard } from "react-chessboard";
+import React from 'react';
 import AuthPage from './AuthPage';
 import Landing from './LandingPage';
 import Home from './HomePage';
@@ -16,36 +13,22 @@ import Game from './GamePage';
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  Link,
+	Route,
   Navigate,
 } from "react-router-dom";
 
-const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== ''){
-	const cookies = document.cookie.split(';');
-	for (let i = 0; i < cookies.length; i++){
-	    const cookie = cookies[i].trim();
-	    if (cookie.substring(0, name.length + 1) === name + '='){
-		cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-		break;}
-	}
-    }
-    return cookieValue;
-};
 
 const App = () => {
-	const isAuthenticated = false;
 	return (
 	    <Router>
 	        <Routes>
 				<Route path="/" element={<Landing isAuthenticated={hasToken()} />} />
-				<Route path="/login" element={<AuthPage currentView="logIn" />} />
-				<Route path="/register" element={<AuthPage currentView="signUp" />} />
-				<Route path='/home' element={<AuthWrapperHome isAuthenticated={isAuthenticated} />} />
-				<Route path="/bots" element={<BotsSelection />} />
-				<Route path="/game/:gameId" element={<Game />} />
+				<Route path="/login" element={<AuthPage current_view="login" />} />
+				<Route path="/signup" element={<AuthPage current_view="signup" />} />
+				<Route path='/home' element={hasToken() ? <Home /> : <Navigate to="/login" replace />} />
+				<Route path="/bots" element={hasToken() ? <BotsSelection /> : <Navigate to="/login" replace />} />
+				<Route path="/game/:gameId" element={hasToken() ? <Game /> : <Navigate to="/login" replace />} />
+				<Route path="*" element={< Navigate to="/" replace />} />
 			</Routes>
 	    </Router>
 	);
@@ -59,15 +42,6 @@ const hasToken = () => {
     else{
 	return false;
 	}
-};
-
-const AuthWrapperHome = ({isAuthenticated}) => {
-    hasToken() ? isAuthenticated = true : isAuthenticated = false;
-    return isAuthenticated ? (
-	<Home/>
-	) : (
-	<Navigate to="/login" replace />
-	);
 };
 
 export default App;

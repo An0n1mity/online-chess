@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import './HomePage.css';
 import ProfilePicture from "./profile_picture.svg";
@@ -15,10 +14,11 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { Chessboard } from 'react-chessboard';
+import { backend_url } from './Url';
 
 const getUserData = async (token) => {
     try {
-	const response = await axios.get('http://localhost:8000/api/user_info', {
+		const response = await axios.get(backend_url + '/api/user_info', {
 	    headers: {
 		Authorization: `Token ${token}`
 	    }
@@ -31,7 +31,7 @@ const getUserData = async (token) => {
 
 const getChessStats = async (token) => {
 	try {
-		const response = await axios.get('http://localhost:8000/api/chess_stats', {
+		const response = await axios.get(backend_url + '/api/chess_stats', {
 			headers: {
 				Authorization: `Token ${token}`
 			}
@@ -54,7 +54,7 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const token = localStorage.getItem('token');
-			const response = await axios.get('http://localhost:8000/api/user_info', {
+			const response = await axios.get(backend_url + '/api/user_info', {
 				headers: {
 					Authorization: `Token ${token}`
 				}
@@ -78,7 +78,7 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 		setShowStatusInput(false);
 		// Send the status to the backend
 		const token = localStorage.getItem('token');
-		const response = axios.post('http://localhost:8000/api/user_update', {
+		const response = axios.post(backend_url + '/api/user_update', {
 			status: status
 		}, {
 			headers: {
@@ -142,7 +142,7 @@ const HomeCompletedGames = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			const token = localStorage.getItem('token');
-			const response = await axios.get('http://localhost:8000/api/user_info', {
+			const response = await axios.get(backend_url + '/api/user_info', {
 				headers: {
 					Authorization: `Token ${token}`
 				}
@@ -313,7 +313,7 @@ const HomeCompletedGames = () => {
 			return;
 		}
 		// Delete game from database 
-		const reponse = axios.delete(`http://localhost:8000/api/games/${completedGames[selectedGameIndex].id}/delete`, {
+		const reponse = axios.delete(backend_url + `/api/games/${completedGames[selectedGameIndex].id}/delete`, {
 			headers: {
 				Authorization: `Token ${localStorage.getItem('token')}`
 			}
@@ -427,7 +427,7 @@ const HomeBaseHeaderUserStatistics = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			axios.get('http://localhost:8000/api/chess_stats', {
+			axios.get(backend_url + '/api/chess_stats', {
 				headers: {
 					Authorization: `Token ${localStorage.getItem('token')}`
 				}

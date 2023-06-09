@@ -8,13 +8,14 @@ import './BotSelectionPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import start_sound from './start.mp3';
+import { backend_url } from './Url';
 
-const white_color_selection = 'http://127.0.0.1:8000/images/white_color_selection.png';
-const black_color_selection = 'http://127.0.0.1:8000/images/black_color_selection.png';
-const random_color_selection = 'http://127.0.0.1:8000/images/random_color_selection.png';
-const novice_knight = 'http://127.0.0.1:8000/images/knight.png/';
-const strategic_bishop = 'http://127.0.0.1:8000/images/bishop.png/';
-const grandmaster_queen = 'http://127.0.0.1:8000/images/queen.png/';
+const white_color_selection = backend_url + '/images/white_color_selection.png';
+const black_color_selection = backend_url + '/images/black_color_selection.png';
+const random_color_selection = backend_url + '/images/random_color_selection.png';
+const novice_knight = backend_url + '/images/knight.png/';
+const strategic_bishop = backend_url + '/images/bishop.png/';
+const grandmaster_queen = backend_url + '/images/queen.png/';
 
 function randomColor() {
     const colors = ['w', 'b'];
@@ -47,7 +48,7 @@ function BotsSelection() {
 
         try {
             const botDifficulty = parseInt(selectedBot);  // Parse the selectedBot value to an integer
-            const response = await axios.post('http://localhost:8000/api/create_game/', {
+            const response = await axios.post(backend_url + '/api/create_game/', {
                 bot_difficulty: botDifficulty,
                 color: selectedColor,
                 time_control: timeControl,
@@ -88,7 +89,7 @@ function BotsSelection() {
                         autoFocus
                         onMouseDown={() => Click('1', novice_knight, 'Novice Knight, a young chess bot, strives to master the art of chess. With a natural talent for tactics, it learns the fundamentals of piece development and strategic positioning, ready to challenge opponents and prove its worth.', 'Novice Knight', '800', 'US')}
                     >
-                        <img src="http://127.0.0.1:8000/images/knight.png/" alt='Novice Knight' />
+                        <img src={novice_knight} alt='Novice Knight' />
                     </button>
                     <button className='selection-option'
                         onMouseDown={() => Click('2', strategic_bishop, "Strategic Bishop, a budding chess bot, embarks on a quest to conquer the realm of chess. Endowed with an innate knack for tactics, it diligently grasps the essence of piece progression and astute positioning. It fearlessly challenges rivals.", 'Strategic Bishop', '1200', 'GB')}
@@ -98,7 +99,7 @@ function BotsSelection() {
                     <button className='selection-option'
                         onMouseDown={() => Click('3', grandmaster_queen, "Grandmaster Queen, a formidable chess bot, aspires to reign supreme in the realm of chess. Blessed with exceptional strategic acumen, it relentlessly hones its mastery of the game. It orchestrates intricate maneuvers and anticipates opponents' tactics.", 'Grandmaster Queen', '1600', 'RU')}
                     >
-                        <img src="http://127.0.0.1:8000/images/queen.png/" alt='Grandmaster Queen' />
+                        <img src={grandmaster_queen} alt='Grandmaster Queen' />
 
                     </button>
                 </div>

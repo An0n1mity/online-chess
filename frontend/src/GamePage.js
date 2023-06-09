@@ -11,6 +11,8 @@ import drop_audio from "./drop.mp3";
 import take_audio from "./take.mp3";
 import end_audio from "./end.mp3";
 
+import { backend_url } from "./Url";
+
 function to_color(color) {
     if (color === "w") {
         return "white";
@@ -41,11 +43,11 @@ function level_to_elo(level) {
 
 function level_to_avatar(level) {
     if (level === 1) {
-        return 'http://127.0.0.1:8000/images/knight.png/'
+        return backend_url + '/images/knight.png/'
     } else if (level === 2) {
-        return 'http://127.0.0.1:8000/images/bishop.png/'
+        return backend_url + '/images/bishop.png/'
     } else {
-        return 'http://127.0.0.1:8000/images/queen.png/'
+        return backend_url + '/images/queen.png/'
     }
 }
 
@@ -103,12 +105,13 @@ function Stats(props) {
 
         const fetchRemainingTime = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/game/${gameId}/state`, {
+                const response = await axios.get(backend_url + `/api/game/${gameId}/state`, {
                     headers: {
                         Authorization: `Token ${localStorage.getItem('token')}`,
                     },
                 });
-                const data = await response.json();
+                const data = response.data;
+                console.log(data);
                 if (type === 'player') {
                     setRemainingTime(time_seconds_to_date(data.player_remaining_time));
                 } else {
@@ -128,8 +131,6 @@ function Stats(props) {
                 if (time.getSeconds() % 5 === 0) {
                     fetchRemainingTime();
                 }
-
-                console.log(time.getTime());
 
                 // If time is up, handle game over
                 if (time.getTime() <= 0) {
@@ -210,18 +211,16 @@ function Game() {
     useEffect(() => {
         const fetchGameState = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/game/${gameId}/state`, {
+                const response = await axios.get(backend_url + `/api/game/${gameId}/state`, {
                     headers: {
                         Authorization: `Token ${localStorage.getItem('token')}`,
                     },
                 });
-                const data = await response.json();
-
+                const data = response.data;
                 // If game doesn't exist, redirect to home
                 if (data.detail === "Not found.") {
                     window.location.href = "/";
                 }
-                console.log(data);
                 // Get if the game is completed
                 setGameOver(data.is_game_complete);
                 // Get the reason of game over
@@ -237,13 +236,14 @@ function Game() {
                 // Get the player elo
                 setPlayerElo(data.player_elorating);
                 // Get the player avatar
-                setPlayerAvatar('http://127.0.0.1:8000' + data.player_avatar);
+                setPlayerAvatar(backend_url + data.player_avatar);
                 // Get the player remaining time
                 setPlayerRemainingTime(data.player_remaining_time);
                 // Get the bot remaining time
                 setBotRemainingTime(data.bot_remaining_time);
 
                 const copy_game = new Chess(data.state);
+                console.log(copy_game.fen());
                 setGame(copy_game);
 
                 // Check if the game is over in case of checkmate or stalemate or timed out
@@ -265,6 +265,7 @@ function Game() {
                 } else {
                     // Bot's turn
                     if (!gameStarted) {
+                        console.log('Bot turn');
                         makeBotMove();
                         setGameStarted(true);
                     }
@@ -276,7 +277,7 @@ function Game() {
 
         const makeBotMove = async () => {
             try {
-                const response = await axios.post(`http://localhost:8000/api/game/${gameId}/move/`, {
+                const response = await axios.post(backend_url + `/api/game/${gameId}/move/`, {
                     start_game: true,
                 }, {
                     headers: {
@@ -284,8 +285,8 @@ function Game() {
                     },
                 });
                 const data = await response.data;
-                console.log(data);
                 const game_copy = new Chess(data.state);
+                console.log(game_copy.fen());
                 setGame(game_copy);
                 dropSound.currentTime = 0;
                 dropSound.play();
@@ -302,14 +303,13 @@ function Game() {
     // Make a move
     const sendMove = async (move) => {
         try {
-            const response = await axios.post(`http://localhost:8000/api/game/${gameId}/move/`, move, {
+            const response = await axios.post(backend_url + `/api/game/${gameId}/move/`, move, {
                 headers: {
                     Authorization: `Token ${localStorage.getItem('token')}`,
                 },
             });
 
             const data = await response.data;
-            console.log(data);
             const game_copy = new Chess(data.state);
             setGame(game_copy);
 
@@ -421,7 +421,6 @@ function Game() {
         return <div>Loading...</div>;
     }
     else {
-        console.log(botDifficulty);
 
         return (
             < div className="container" >

@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser, PermissionsMixin
-from django.conf import settings
 from django.utils.crypto import get_random_string
+from rest_framework.authtoken.models import Token
 
-from datetime import datetime, timedelta
 class UserManager(BaseUserManager):
     """
     Django requires that custom users define their own Manager class. By
@@ -25,6 +24,7 @@ class UserManager(BaseUserManager):
         user = self.model(username=username, email=self.normalize_email(email), country=country)
         user.set_password(password)
         user.save()
+
         return user
 
     def create_superuser(self, username, email, password):
@@ -108,17 +108,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         return self.email
 
-    @property
-    def token(self):
-        """
-        Allows us to get a user's token by calling `user.token` instead of
-        `user.generate_jwt_token().
-
-        The `@property` decorator above makes this possible. `token` is called
-        a "dynamic property".
-        """
-        return self._generate_jwt_token()
-
     def get_full_name(self):
         """
         This method is required by Django for things like handling emails.
@@ -135,19 +124,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         return self.username
 
-    def _generate_jwt_token(self):
-        """
-        Generates a JSON Web Token that stores this user's ID and has an expiry
-        date set to 60 days into the future.
-        """
-        dt = datetime.now() + timedelta(days=60)
-
-        token = jwt.encode({
-            'id': self.pk,
-            'exp': int(dt.strftime('%s'))
-        }, settings.SECRET_KEY, algorithm='HS256')
-
-        return token
 
 class ChessGameStatistics(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -42,6 +42,7 @@
 
 .navbar-buttons .login-button {
   background-color: #7fa650;
+  box-shadow: 0 0 0 1px #7fa650;
   color: white;
 }
 

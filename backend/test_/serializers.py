@@ -1,8 +1,9 @@
 from rest_framework import serializers
-
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.authtoken.models import Token
 from .models import User, ChessGameStatistics, ChessGame
 from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
 
 """
 In Django, a serializer is a module that allows you to convert complex data types, such as Django models, into Python data types that can be easily rendered into JSON or other content types. The "goal" of a serializer refers to its ability to handle the serialization process in an efficient and effective manner, with a focus on providing a clean, well-structured representation of the data.
@@ -14,43 +15,30 @@ In summary, the "goal" of a serializer in Django is its ability to handle data s
 
 """Serializers registration requests and creates a new user."""
 
-def validate_password(password):
-    if len(password) < 8:
-        raise serializers.ValidationError("Password must be at least 8 characters long")
-    if password.isdigit():
-        raise serializers.ValidationError("Password must contain at least one letter")
-    return password
-
 class RegistrationSerializer(serializers.ModelSerializer):
-        # Ensure passwords are at least 8 characters long, no longer than 128
-    # characters, and can not be read by the client.
-    password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        # Don't send the password in the response
-        write_only=True,
-        validators=[validate_password]
-    )
 
-    # The client should not be able to send a token along with a registration
-    # request. Making `token` read-only handles that for us.
-    token = serializers.CharField(max_length=255, read_only=True)
+    email = serializers.EmailField(max_length=255, min_length=3, validators=[UniqueValidator(queryset=User.objects.all())], required=True)
+    username = serializers.CharField(max_length=255, validators=[UniqueValidator(queryset=User.objects.all())], required=True)
+    password = serializers.CharField(max_length=128, min_length=8, write_only=True, required=True, validators=[validate_password])
 
     class Meta:
         model = User
-        # List all of the fields that could possibly be included in a request
-        # or response, including fields specified explicitly above.
-        fields = ['email', 'username', 'password', 'token', 'country']
-        validators = []
+        fields = ['username', 'email', 'password', 'country']
 
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
-        user = User.objects.create_user(**validated_data)
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            country=validated_data['country']
+        )
+        user.save()
 
         # Create the chess statistics for the user 
-        ChessGameStatistics.objects.create(user=user)
+        chess_stats = ChessGameStatistics.objects.create(user=user)
+        chess_stats.save()
 
-        Token.objects.create(user=user)
         return user
     
 class LoginSerializer(serializers.Serializer):

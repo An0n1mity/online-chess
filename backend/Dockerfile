@@ -17,6 +17,10 @@ RUN pip install -r requirements.txt
 # Copy the Django project code to the working directory
 COPY . .
 
+# Run the database migrations
+#RUN python manage.py makemigrations
+#RUN python manage.py migrate
+
 # Expose the Django server port
 EXPOSE 8000
 
