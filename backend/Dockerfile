@@ -24,5 +24,8 @@ COPY . .
 # Expose the Django server port
 EXPOSE 8000
 
+# Migration
+RUN python manage.py migrate
+
 # Run the Django server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
