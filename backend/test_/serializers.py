@@ -46,7 +46,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
 
     def validate(self, data):
-
+        print(data)
         # Client can send either username or email to log in
         username = data.get('username', None)
         if username is None:
