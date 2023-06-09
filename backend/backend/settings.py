@@ -55,14 +55,10 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_',
     'rest_framework',
-    'rest_framework.authtoken',
-    'django_extensions',
-    'channels',
 ]
 
 MIDDLEWARE = [
@@ -164,7 +160,6 @@ REST_FRAMEWORK = {
         }
 
 GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
-print(GEOIP_PATH)
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
 # Celery conf

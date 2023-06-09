@@ -24,10 +24,8 @@ COPY . .
 # Expose the Django server port
 EXPOSE 8000
 
-# Recreate the database
-RUN python manage.py makemigrations -v3
-# Migration
-RUN python manage.py migrate -v3
+# Run scripts.py
+RUN python scripts.py
 
 # Run the Django server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

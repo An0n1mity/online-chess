@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils.crypto import get_random_string
-from rest_framework.authtoken.models import Token
 
 class UserManager(BaseUserManager):
     """
