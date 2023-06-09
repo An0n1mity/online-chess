@@ -25,10 +25,7 @@ COPY . .
 EXPOSE 8000
 
 # Recreate the database
-RUN python manage.py flush --no-input -v3
-# Create a superuser
-RUN python manage.py createsuperuser --no-input
-
+RUN python manage.py makemigrations -v3
 # Migration
 RUN python manage.py migrate -v3
 
