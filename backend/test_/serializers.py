@@ -85,7 +85,11 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('error : This user has been deactivated.')
 
         print('user is valid')
-        token, _ = Token.objects.get_or_create(user=user)
+        try:
+            token, _ = Token.objects.get_or_create(user=user)
+        except Exception as e:
+            print(f"An error occurred during token creation: {str(e)}")
+
         return {
             "email": user.email,
             "username": user.username,
