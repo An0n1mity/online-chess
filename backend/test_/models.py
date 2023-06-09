@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     country = models.CharField(max_length=255, blank=True, null=True)
 
     # Avatar
-    avatar = models.ImageField(upload_to=get_image_upload_path, default="images/basic_avatar.png")
+    avatar = models.ImageField(upload_to='', default="images/basic_avatar.png")
 
     # When a user no longer wishes to use our platform, they may try to delete
     # their account. That's a problem for us because the data we collect is

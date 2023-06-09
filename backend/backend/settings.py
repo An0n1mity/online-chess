@@ -103,8 +103,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
+"""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",P
+        "NAME": "onlinechess",
+        "USER": "root",
+        "PASSWORD": "root",
+        "HOST": "db",  # set in docker-compose.yml
+        "PORT": 5432,  # default postgres port
+    }
+}
+"""
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -165,11 +175,12 @@ REST_FRAMEWORK = {
 GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
+import os
 # Celery conf
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-#CELERY_BROKER_URL = 'redis://localhost:6379/0'
-#CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+#CELERY_BROKER_URL = 'redis://redis:6379/0'
+#CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = os.environ.get("BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("RESULT_BACKEND", "redis://localhost:6379/0")
 
 
 CELERY_BEAT_SCHEDULE = {

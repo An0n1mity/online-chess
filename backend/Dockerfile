@@ -24,8 +24,8 @@ COPY . .
 # Expose the Django server port
 EXPOSE 8000
 
-# Run scripts.py
+# Run scripts.py for migrations
 RUN python scripts.py
 
 # Run the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./entrypoint.sh"]
