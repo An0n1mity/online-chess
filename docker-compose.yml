@@ -2,8 +2,8 @@ version: '3'
 services:
   django:
     environment:
-      - CELERY_BROKER_URL=redis://localhost:redis/0
-      - CELERY_RESULT_BACKEND=redis://localhost:redis/0
+      - CELERY_BROKER_URL=redis://redis:redis/0
+      - CELERY_RESULT_BACKEND=redis://redis:redis/0
     build:
       context: ./backend # Path to the Django project directory
     ports:
