@@ -50,8 +50,6 @@ class LoginSerializer(serializers.Serializer):
         fields = ['username', 'password']
 
     def validate(self, data):
-        # Data is ordered dictionary
-
         # Client can send either username or email to log in
         username = data.get('username', None)
         print(username)

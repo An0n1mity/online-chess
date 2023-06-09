@@ -159,11 +159,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL = True
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # REST FRAMEWORK
 REST_FRAMEWORK = {
-        # Any view that uses DRF will automatically use the DjangoFilterBackend to filter the queryset
-        # Any view that uses DRF will automatically use JSON Web Tokens (JWT) for authentication. This allows the API to verify the authenticity of requests and ensures that only authorized users can access the protected resources
         'DEFAULT_AUTHENTICATION_CLASSES': [
             'rest_framework.authentication.TokenAuthentication',
             ],
