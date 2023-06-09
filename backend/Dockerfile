@@ -24,6 +24,12 @@ COPY . .
 # Expose the Django server port
 EXPOSE 8000
 
+# Recreate the database
+RUN python manage.py flush --no-input
+
+# Create a superuser
+RUN python manage.py createsuperuser --no-input
+
 # Migration
 RUN python manage.py migrate -v3
 
