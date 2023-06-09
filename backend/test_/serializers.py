@@ -68,14 +68,17 @@ class LoginSerializer(serializers.Serializer):
             )
         
         # Try to authenticate the user
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=username, password=password)
 
         if user is None:
+            print('user is none')
             raise serializers.ValidationError('error : A user with this username/email and password is not found.')
 
         if not user.is_active:
+            print('user is not active')
             raise serializers.ValidationError('error : This user has been deactivated.')
 
+        print('user is valid')
         token, _ = Token.objects.get_or_create(user=user)
         return {
             "email": user.email,
