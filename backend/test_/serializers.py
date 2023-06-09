@@ -44,8 +44,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, write_only=True)
-    token = serializers.CharField(max_length=255, read_only=True)
-    country = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
 

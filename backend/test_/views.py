@@ -101,7 +101,6 @@ class LoginAPIView(APIView):
         print(request.data)
         user = request.data.get('user', {})
         serializer = LoginSerializer(data=user)
-        print(serializer.data)
         try:
             serializer.is_valid(raise_exception=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
