@@ -3,6 +3,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.authtoken.models import Token
 from .models import User, ChessGameStatistics, ChessGame
+from .models import UserManager
 from django.contrib.auth import authenticate
 
 """
@@ -26,7 +27,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'country']
 
     def create(self, validated_data):
-        # Use the `create_user` method we wrote earlier to create a new user.
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -71,10 +71,11 @@ class LoginSerializer(serializers.Serializer):
         
         # Try to authenticate the user
         try:
-            user = authenticate(username=username, password=password)
-        except:
-            print('user is none')
+            user = authenticate(username=username, password=password) 
+        except Exception as e:
+            print(f"An error occurred during authentication: {str(e)}")  
 
+        
         if user is None:
             print('user is none')
             raise serializers.ValidationError('error : A user with this username/email and password is not found.')
