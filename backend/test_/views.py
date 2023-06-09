@@ -102,9 +102,9 @@ class LoginAPIView(APIView):
         user = request.data.get('user', {})
         serializer = LoginSerializer(data=user)
         try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            value = serializer.is_valid(raise_exception=True)
+            print(value)
+            return Response(value, status=status.HTTP_200_OK)
         except:
             try:
                 # if username is empty
