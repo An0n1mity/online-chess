@@ -98,6 +98,7 @@ class LoginAPIView(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
+        print(request.data)
         user = request.data.get('user', {})
         serializer = LoginSerializer(data=user)
         print(serializer.data)
