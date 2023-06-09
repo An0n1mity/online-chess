@@ -25,7 +25,7 @@ COPY . .
 EXPOSE 8000
 
 # Migration
-RUN python manage.py migrate
+RUN python manage.py migrate -v3
 
 # Run the Django server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
