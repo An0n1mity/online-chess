@@ -10,6 +10,8 @@ services:
       - redis
     networks:
       - app-network
+    command:
+      celery -A backend worker -l info &
 
   react:
     build:
@@ -26,16 +28,6 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
-    networks:
-      - app-network
-
-  celery:
-    build:
-      context: ./backend  # Path to the Django project directory
-    command: celery -A backend worker
-    depends_on:
-      - django
-      - redis
     networks:
       - app-network
 

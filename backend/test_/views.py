@@ -116,7 +116,7 @@ class RegistrationAPIView(APIView):
             except:
                 pass
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error' : 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginAPIView(APIView):
