@@ -71,7 +71,7 @@ class LoginSerializer(serializers.Serializer):
         
         # Try to authenticate the user
         try:
-            user = authenticate(username=username, password=password) 
+            user = authenticate(email=email, password=password) 
         except Exception as e:
             print(f"An error occurred during authentication: {str(e)}")  
 
