@@ -45,6 +45,10 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, write_only=True)
 
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
     def validate(self, data):
         # Data is ordered dictionary
 
@@ -68,7 +72,10 @@ class LoginSerializer(serializers.Serializer):
             )
         
         # Try to authenticate the user
-        user = authenticate(username=username, password=password)
+        try:
+            user = authenticate(username=username, password=password)
+        except:
+            print('user is none')
 
         if user is None:
             print('user is none')
