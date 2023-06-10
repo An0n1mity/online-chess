@@ -38,6 +38,11 @@ const getChessStats = async (token) => {
 		});
 		return response.data;
 	} catch (error) {
+		// If code 401 Unhautorized remove token from local storage and redirect to login page
+		if (error.response && error.response.status === 401) {
+			localStorage.removeItem('token');
+			<Navigate to="/login" replace />
+		}
 		console.log(error);
 	}
 };
@@ -59,8 +64,12 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 					Authorization: `Token ${token}`
 				}
 			});
+			// If code 401 Unhautorized remove token from local storage and redirect to login page
+			if (response && response.status === 401) {
+				localStorage.removeItem('token');
+				<Navigate to="/login" replace />
+			}
 			setStatus(response.data.status);
-			console.log(response.data);
 		};
 		fetchData();
 	}, []);
@@ -85,6 +94,12 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 				Authorization: `Token ${token}`
 			}
 		});
+
+		// If code 401 Unhautorized remove token from local storage and redirect to login page
+		if (response && response.status === 401) {
+			localStorage.removeItem('token');
+			<Navigate to="/login" replace />
+		}
 	}
 
 
@@ -147,6 +162,12 @@ const HomeCompletedGames = () => {
 					Authorization: `Token ${token}`
 				}
 			});
+			// If code 401 Unhautorized remove token from local storage and redirect to login page
+			if (response && response.status === 401) {
+				localStorage.removeItem('token');
+				<Navigate to="/login" replace />
+			}
+
 			setCompletedGames(response.data.games);
 			// if no games are played, set the statistics of the last played chess game for testing purposes
 			if (response.data.games.length === 0) {
@@ -320,6 +341,11 @@ const HomeCompletedGames = () => {
 		}).then((response) => {
 			console.log(response);
 		}).catch((error) => {
+			// If code 401 Unhautorized remove token from local storage and redirect to login page
+			if (error.response && error.response.status === 401) {
+				localStorage.removeItem('token');
+				<Navigate to="/login" replace />
+			}
 			console.log(error);
 		});
 
@@ -435,6 +461,11 @@ const HomeBaseHeaderUserStatistics = () => {
 				console.log(response.data);
 				setUserStatistics(response.data);
 			}).catch((error) => {
+				// If code 401 Unhautorized remove token from local storage and redirect to login page
+				if (error.response && error.response.status === 401) {
+					localStorage.removeItem('token');
+					<Navigate to="/login" replace />
+				}
 				console.log(error);
 			});
 		};

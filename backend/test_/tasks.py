@@ -2,7 +2,7 @@ from celery import shared_task
 from django.utils import timezone
 
 from django.db import transaction
-from .models import ChessGame
+from .models import ChessGame, User
 import time
 
 @shared_task
@@ -10,7 +10,6 @@ def update_player_remaining_time(game_id):
     while True:
         with transaction.atomic():
             game = ChessGame.objects.select_for_update().get(id=game_id)
-
             if game.is_completed:
                 break
 
@@ -22,6 +21,10 @@ def update_player_remaining_time(game_id):
                     # Game over, handle accordingly
                     game.is_completed = True
                     game.end_time = timezone.now()
+                    user = game.user
+                    user.number_of_losses += 1
+                    user.number_of_games += 1
+                    user.save()
                     game.reason = 'time limit'
 
                 game.save()

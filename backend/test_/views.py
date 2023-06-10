@@ -291,8 +291,15 @@ def get_bot_move(fen, difficulty):
     # Set the ply (the number of moves to look ahead) based on the difficulty level
     if difficulty == 1:
         result = easy_bot.play(board, chess.engine.Limit(depth=1, nodes=1))
-        # wait a certain amount of time before making the move
-        time.sleep(3)
+
+    elif difficulty == 2:
+        result = easy_bot.play(board, chess.engine.Limit(depth=3, nodes=10))
+
+    elif difficulty == 3:
+        result = easy_bot.play(board, chess.engine.Limit)
+
+    # wait a certain amount of time following a uniform distribution
+    time.sleep(random.uniform(1, 7))
 
     return result.move
 
@@ -367,6 +374,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'time limit'
                     game.save()
+
+                    # Update number of losses for user
+                    user.number_of_losses += 1
+                    user.number_of_wins += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 board.push(move)
@@ -381,6 +394,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'checkmate'
                     game.save()
+
+                    # Update number of winq for user
+                    user.number_of_games += 1
+                    user.number_of_wins += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 # elif stalemate, the game is over
@@ -389,6 +408,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'stalemate'
                     game.save()
+
+                    # Update number of draws for user
+                    user.number_of_games += 1
+                    user.number_of_draws += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 bot_move = get_bot_move(game.state, game.bot_difficulty)
@@ -416,6 +441,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'time limit'
                     game.save()
+
+                    # Update number of wins for user
+                    user.number_of_wins += 1
+                    user.number_of_games += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 board.push(bot_move)
@@ -430,6 +461,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'checkmate'
                     game.save()
+
+                    # Update number of losses for user
+                    user.number_of_losses += 1
+                    user.number_of_games += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 # elif stalemate, the game is over
@@ -438,6 +475,12 @@ class ChessGameMoveAPIView(APIView):
                     game.end_time = request_time
                     game.reason = 'stalemate'
                     game.save()
+
+                    # Update number of wins for user
+                    user.number_of_draws += 1
+                    user.number_of_games += 1
+                    user.save()
+
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time, 'captured': captured})

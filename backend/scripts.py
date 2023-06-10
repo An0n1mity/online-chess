@@ -15,7 +15,7 @@ def run_makemigrations():
         # Wait for the process to complete and get the output
         while process.poll() is None:
             # Check if the timeout duration has exceeded
-            if time.time() - start_time > 5:
+            if time.time() - start_time > 10:
                 # Kill the process if it's still running
                 process.terminate()
                 process.wait()
@@ -66,7 +66,7 @@ def run_migrate():
         # Wait for the process to complete and get the output
         while process.poll() is None:
             # Check if the timeout duration has exceeded
-            if time.time() - start_time > 5:
+            if time.time() - start_time > 10:
                 # Kill the process if it's still running
                 process.terminate()
                 process.wait()
