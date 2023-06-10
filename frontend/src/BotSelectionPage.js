@@ -10,6 +10,8 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import start_sound from './start.mp3';
 import { backend_url } from './Url';
 
+import Navbar from './Navbar';
+
 const white_color_selection = backend_url + '/images/white_color_selection.png';
 const black_color_selection = backend_url + '/images/black_color_selection.png';
 const random_color_selection = backend_url + '/images/random_color_selection.png';
@@ -167,7 +169,6 @@ function BotsSelection() {
             </div>
             {isChoosed ? settingComponent() : selectionComponent()}
         </div >
-
     );
 }
 

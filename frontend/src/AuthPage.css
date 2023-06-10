@@ -1,10 +1,10 @@
 body {
-  height: 100vh;
-  width: 100vw;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  background-size: cover;
   background: url("signup-background.png");
   background-color: #312e2b;
-  background-size: cover;
-  background-repeat: no-repeat;
   background-position: center;
 }
 
@@ -78,7 +78,14 @@ form {
   padding: 20px;
   width: 400px;
   margin: auto;
-  margin-top: 100px;
+}
+
+form#login-form {
+  margin-top: 9%;
+}
+
+form#signup-form {
+  margin-top: 5%;
 }
 
 form h2 {
@@ -150,3 +157,22 @@ form ul {
   margin: 0;
 }
 
+
+/* Styles for small screen devices */
+@media (max-width: 767px) {
+  body {
+    background-size: cover;
+  }
+
+  form {
+    width: 80%;
+  }
+
+  form#login-form {
+    margin-top: 30%;
+  }
+  
+  form#signup-form {
+    margin-top: 10%;
+  }
+}

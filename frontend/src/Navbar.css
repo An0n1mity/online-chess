@@ -1,15 +1,24 @@
 .navbar {
+  top: 0;
+  left: 0;
   background-color: #272522;
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: 50px 1fr 50px;
-  width: 10%;
+  transition: width 0.1s ease-in-out;
 }
 
 .navbar-logo a {
   color: white;
   font-weight: bold;
   text-decoration: none;
+}
+
+.navbar-toggle {
+  cursor: pointer;
+  style: none;
+  color: inherit;
+	border: none;
 }
 
 .navbar-buttons {
@@ -26,18 +35,19 @@
   font-size: 16px;
   font-weight: bold;
   padding: 8px 16px;
+  width: 80%;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  width: 100%;
-}
-
-.navbar-buttons button:hover {
-  background-color: #1e1d1a;
+  jusify-content: center;
 }
 
 .navbar-buttons .signup-button {
   background-color: #383633;
   color: white;
+}
+
+.navbar-buttons .signup-button:hover {
+  background-color: #1e1d1a;
 }
 
 .navbar-buttons .login-button {

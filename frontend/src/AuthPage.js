@@ -104,6 +104,11 @@ const AuthPage = ({ current_view }) => {
       })
         .then(response => {
           console.log(response);
+          if (response.status == 201) {
+            console.log('Account created successfully');
+            setCurrentView('login');
+            <Navigate to="/login" replace />
+          }
         })
         .catch(error => {
           console.log(error.response.data.error);
@@ -161,7 +166,7 @@ const AuthPage = ({ current_view }) => {
     switch (currentView) {
       case 'signup':
         return (
-          <form onSubmit={handleSubmit}>
+          <form id='signup-form' onSubmit={handleSubmit}>
             <h2>Sign Up!</h2>
             <fieldset>
               <legend>Create Account</legend>
@@ -188,7 +193,7 @@ const AuthPage = ({ current_view }) => {
         );
       case 'login':
         return (
-          <form onSubmit={handleSubmit}>
+          <form id='login-form' onSubmit={handleSubmit}>
             <h2>Online-Chess ♟️</h2>
             <fieldset>
               <ul>
