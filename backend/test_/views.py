@@ -375,10 +375,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'time limit'
                     game.save()
 
-                    # Update number of losses for user
-                    user.number_of_losses += 1
-                    user.number_of_wins += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_lost += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -395,10 +395,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'checkmate'
                     game.save()
 
-                    # Update number of winq for user
-                    user.number_of_games += 1
-                    user.number_of_wins += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_won += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -409,10 +409,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'stalemate'
                     game.save()
 
-                    # Update number of draws for user
-                    user.number_of_games += 1
-                    user.number_of_draws += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_won += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -442,10 +442,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'time limit'
                     game.save()
 
-                    # Update number of wins for user
-                    user.number_of_wins += 1
-                    user.number_of_games += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_won += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -462,10 +462,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'checkmate'
                     game.save()
 
-                    # Update number of losses for user
-                    user.number_of_losses += 1
-                    user.number_of_games += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_lost += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -476,10 +476,10 @@ class ChessGameMoveAPIView(APIView):
                     game.reason = 'stalemate'
                     game.save()
 
-                    # Update number of wins for user
-                    user.number_of_draws += 1
-                    user.number_of_games += 1
-                    user.save()
+                    # Update statistics 
+                    statistics = get_object_or_404(ChessGameStatistics, user=user)
+                    statistics.games_drawn += 1
+                    statstics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 

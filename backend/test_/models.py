@@ -90,18 +90,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     status = models.CharField(max_length=255, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='images/', default='images/basic_avatar.png')
 
-    # Number of games played
-    number_of_games = models.IntegerField(default=0)
-
-    # Number of wins
-    number_of_wins = models.IntegerField(default=0)
-
-    # Number of draws
-    number_of_draws = models.IntegerField(default=0)
-
-    # Number of losses
-    number_of_losses = models.IntegerField(default=0)
-
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
     USERNAME_FIELD = 'email'

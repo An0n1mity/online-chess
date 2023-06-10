@@ -152,6 +152,15 @@ const HomeCompletedGames = () => {
 	// Square color 
 	const [squareColor, setSquareColor] = useState(null);
 	const [swipeDirection, setSwipeDirection] = useState(null);
+	// Number of completed games 
+	const [numberOfGames, setNumberOfGames] = useState(0);
+	// Number of wins 
+	const [numberOfWins, setNumberOfWins] = useState(0);
+	// Number of draws 
+	const [numberOfDraws, setNumberOfDraws] = useState(0);
+	// Number of losses
+	const [numberOfLosses, setNumberOfLosses] = useState(0);
+
 
 	// Fetch completed games
 	useEffect(() => {
@@ -169,6 +178,11 @@ const HomeCompletedGames = () => {
 			}
 
 			setCompletedGames(response.data.games);
+			setNumberOfGames(response.data.number_of_games);
+			setNumberOfWins(response.data.number_of_wins);
+			setNumberOfDraws(response.data.number_of_draws);
+			setNumberOfLosses(response.data.number_of_losses);
+
 			// if no games are played, set the statistics of the last played chess game for testing purposes
 			if (response.data.games.length === 0) {
 				return;
