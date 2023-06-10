@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile.prod
       context: ./backend # Path to the Django project directory
       # dockerfile: Dockerfile.dev
+    ports:
+      - 8000:8000
     networks:
       - app-network
     depends_on:
