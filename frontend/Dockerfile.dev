@@ -17,5 +17,5 @@ COPY . .
 # Expose the React app port
 EXPOSE 3000
 
-# Serve the React app using a lightweight web server
-CMD [ "npm", "start" ]
+# Serve the React app using a lightweight web server set https to true
+CMD ["npm", "start"]

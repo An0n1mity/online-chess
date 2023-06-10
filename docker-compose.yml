@@ -5,41 +5,29 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     build:
+      dockerfile: Dockerfile.prod
       context: ./backend # Path to the Django project directory
-    ports:
-      - 8000:8000
+      # dockerfile: Dockerfile.dev
     networks:
       - app-network
     depends_on:
       - redis
+
   react:
     build:
+      dockerfile: Dockerfile.prod
+      # dockerfile: Dockerfile.dev
       context: ./frontend  # Path to the React project directory
     ports:
-      - 80:3000
-    networks:
-      - app-network
-    volumes:
-      - './frontend/src:/frontend/src'
-    command: npm start
-
-  redis:
-    image: redis:latest
-    ports:
-      - 6379:6379
-    networks:
-      - app-network
-
-   nginx:
-    build:
-      context: ./nginx # Path to the NGINX configuration directory
-      dockerfile: Dockerfile
-    ports:
+      - 80:80
       - 443:443
     networks:
       - app-network
-    depends_on:
-      - react
+
+  redis:
+    image: redis:alpine
+    networks:
+      - app-network
 
 networks:
   app-network:
