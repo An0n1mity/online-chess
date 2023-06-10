@@ -30,7 +30,7 @@ const OnlineGameBlock = () => {
 			    <icon className="online-game-block-info-bots-icon">🤖</icon>
 			</div>
 			<div className="online-game-block-info-buttons-play-bots-text">
-			    <h1 className="online-game-block-info-buttons-play-bots-text-title">Play Bots</h1>
+							  <h1 className="online-game-block-info-buttons-play-bots-text-title">Play &nbsp;&nbsp;Bots&nbsp;&nbsp;</h1>
 			    <h2 className="online-game-block-info-buttons-play-bots-text-subtitle">Play with the computer</h2>
 			</div>
 		    </button>

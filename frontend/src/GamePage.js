@@ -203,7 +203,7 @@ function Game() {
         setShowPopup(true);
         setStopBotClock(true);
         setStopPlayerClock(true);
-        endSound.play();
+        endSound.play().catch(error => console.log(error));
     };
 
 

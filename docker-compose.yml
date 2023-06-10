@@ -16,7 +16,7 @@ services:
     build:
       context: ./frontend  # Path to the React project directory
     ports:
-      - 80:80
+      - 80:3000
     networks:
       - app-network
     volumes:
@@ -29,6 +29,17 @@ services:
       - 6379:6379
     networks:
       - app-network
+
+   nginx:
+    build:
+      context: ./nginx # Path to the NGINX configuration directory
+      dockerfile: Dockerfile
+    ports:
+      - 443:443
+    networks:
+      - app-network
+    depends_on:
+      - react
 
 networks:
   app-network:

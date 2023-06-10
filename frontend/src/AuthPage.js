@@ -131,7 +131,7 @@ const AuthPage = ({ current_view }) => {
           if (response.status === 200) {
             setLogin(true);
             localStorage.setItem('token', response.data.token);
-            <Navigate to="/home" />
+            <Navigate to="/home" replace />
           }
         })
         .catch(error => {

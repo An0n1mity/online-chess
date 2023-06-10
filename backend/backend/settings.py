@@ -32,16 +32,16 @@ ALLOWED_HOSTS = [
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost',
-    'http://localhost:3000',  # for localhost (REACT Default)
+    'http://localhost:80',  # for localhost (REACT Default)
     'http://46.101.210.155',
-    'http://46.101.210.155:3000',
+    'http://46.101.210.155:80',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost',
-    'http://localhost:3000',  # for localhost (REACT Default)
+    'http://localhost:80',  # for localhost (REACT Default)
     'http://46.101.210.155',
-    'http://46.101.210.155:3000'
+    'http://46.101.210.155:80'
 ]
 
 # Application definition

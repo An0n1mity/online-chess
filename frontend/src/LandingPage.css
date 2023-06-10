@@ -162,6 +162,7 @@
   
   .online-game-block {
     flex-direction: column;
+    margin-top: 10%;
     gap: 1%;
   }
   
@@ -178,18 +179,21 @@
   .online-game-block-info-buttons {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    space-between: 1%;
   }
   
   .online-game-block-info-buttons-play-online,
   .online-game-block-info-buttons-play-bots {
-    width: 80%;
-    margin-left: 10%;
+    display: inline-block;
   }
   
   .online-game-block-info-buttons-play-online-text-title,
   .online-game-block-info-buttons-play-bots-text-title {
     font-size: 18px;
+    word-wrap: break-word;
+    text-align: center;
   }
   
   .online-game-block-info-buttons-play-online-text-subtitle,
@@ -197,9 +201,9 @@
     font-size: 0px;
   }
   
-  .online-play-button-img {
-    width: 48px;
-    height: 48px;
-    margin-right: 4px;
+  .online-play-button-img,
+  {
+    width: 32px;
+    height: 32px;
   }
 }
