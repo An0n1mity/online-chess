@@ -7,11 +7,11 @@ import axios from "axios";
 
 import Chess from "chess.js";
 
-import drop_audio from "./drop.mp3";
-import take_audio from "./take.mp3";
-import end_audio from "./end.mp3";
+import drop_audio from "../sfx/drop.mp3";
+import take_audio from "../sfx/take.mp3";
+import end_audio from "../sfx/end.mp3";
 
-import { backend_url } from "./Url";
+import { backend_url } from "../Url";
 
 function to_color(color) {
     if (color === "w") {
@@ -64,11 +64,11 @@ function time_to_string(time) {
 
 
 // component for the stats and timer of the game 
-function Stats(props) {
+const Stats = (props) => {
     // Stats for player or bot based on id 
-    const [type, setType] = useState(props.id === "player-stats" ? "player" : "bot");
+    const type = props.id === "player-stats" ? "player" : "bot";
     const [remainingTime, setRemainingTime] = useState(time_seconds_to_date(props.remainingTime));
-    const [gameId, setGameId] = useState(props.gameId);
+    const gameId = props.gameId;
 
     // use effect hook to handle resize of the board
     useEffect(() => {
@@ -93,15 +93,9 @@ function Stats(props) {
 
     }, [props.id]);
 
-    // If props remaining time changes, update the remaining time
-    useEffect(() => {
-        setRemainingTime(time_seconds_to_date(props.remainingTime));
-    }, [props.remainingTime]);
-
     // If stop clock is true, stop the clock, else start the clock using remainingTime
     useEffect(() => {
         let timer = null;
-
 
         const fetchRemainingTime = async () => {
             try {
@@ -123,26 +117,29 @@ function Stats(props) {
         };
 
         if (!props.stopClock && !props.gameOver) {
+
             timer = setInterval(() => {
+                fetchRemainingTime();
                 const time = new Date(remainingTime.getTime() - 1000);
                 setRemainingTime(time);
-
-                // Every 5 seconds, fetch the time from game state
-                if (time.getSeconds() % 5 === 0) {
-                    fetchRemainingTime();
-                }
 
                 // If time is up, handle game over
                 if (time.getTime() <= 0) {
                     setRemainingTime(time_seconds_to_date(0));
                     props.handleGameOver('time limit');
                 }
+
             }, 1000);
         }
 
+        console.log("o");
+        console.log(props.stopClock);
+
+
         return () => {
-            clearInterval(timer);
+            clearInterval(timer); // Clear the separate interval timer when the component unmounts or when the dependencies change
         };
+
     }, [props.stopClock, remainingTime]);
 
     return (
@@ -387,7 +384,7 @@ function Game() {
         let message;
         let score;
 
-        if (props.type == true) {
+        if (props.type === true) {
             message = "You won by";
             score = "1 - 0";
         }

@@ -15,6 +15,7 @@ from django.conf import settings
 from rest_framework.authtoken.models import Token
 import time
 import datetime
+import random
 
 
 from django.http import FileResponse, HttpResponseNotFound
@@ -325,6 +326,7 @@ class ChessGameMoveAPIView(APIView):
         request_time = datetime.datetime.now()
         token = request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
         try:
+            elapsed_time_since_last_move = 0
             token_obj = Token.objects.get(key=token)
             user = token_obj.user
             game = get_object_or_404(ChessGame, id=game_id, player=user)
@@ -362,10 +364,13 @@ class ChessGameMoveAPIView(APIView):
                 # Convert the time difference to timedelta with minutes and seconds
                 total_seconds = elapsed_time_since_last_move.total_seconds()
                 # Create a new timedelta object with the calculated time difference
+                time_difference = 0
                 time_difference = datetime.timedelta(seconds=total_seconds)
                 # Update the player remaining time
                 game.player_remaining_time -= time_difference
                 game.last_move_time = request_time
+                print(game.player_remaining_time)
+
                 # if the player runs out of time, the game is over
                 if game.player_remaining_time.total_seconds() <= 0:
                     game.player_remaining_time = datetime.timedelta(
@@ -424,7 +429,7 @@ class ChessGameMoveAPIView(APIView):
 
                 # update bot elapsed time
                 elapsed_time_since_last_move = make_aware(
-                    datetime.datetime.now(), datetime.timezone.utc) - game.last_move_time
+                datetime.datetime.now(), datetime.timezone.utc) - game.last_move_time
                 # Convert the time difference to timedelta with minutes and seconds
                 total_seconds = elapsed_time_since_last_move.total_seconds()
                 # Create a new timedelta object with the calculated difference
@@ -432,6 +437,8 @@ class ChessGameMoveAPIView(APIView):
                 # Update the bot remaining time
                 game.bot_remaining_time -= time_difference
                 game.last_move_time += time_difference
+                print(game.player_remaining_time)
+
 
                 # if the bot runs out of time, the game is over
                 if game.bot_remaining_time.total_seconds() <= 0:

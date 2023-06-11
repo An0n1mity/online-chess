@@ -7,10 +7,8 @@ import './BotSelectionPage.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import start_sound from './start.mp3';
-import { backend_url } from './Url';
-
-import { Navigate } from 'react-router-dom';
+import start_sound from '../sfx/start.mp3';
+import { backend_url } from '../Url';
 
 const white_color_selection = backend_url + '/images/white_color_selection.png';
 const black_color_selection = backend_url + '/images/black_color_selection.png';
@@ -65,7 +63,7 @@ function BotsSelection() {
             // If code 401 Unhautorized remove token from local storage and redirect to login page
             if (error.response && error.response.status === 401) {
                 localStorage.removeItem('token');
-                <Navigate to="/login" replace />
+                navigate("/login")
             }
             console.error('Error:', error);
         }

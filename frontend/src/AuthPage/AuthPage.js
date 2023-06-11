@@ -4,9 +4,10 @@ import PasswordStrengthBar from 'react-password-strength-bar';
 import zxcvbn from 'zxcvbn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { Navigate } from 'react-router-dom';
-import { backend_url } from './Url';
+import { backend_url } from '../Url';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './AuthPage.css';
 
 const PasswordInput = ({ password, onPasswordChange }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,10 +49,10 @@ const AuthPage = ({ current_view }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [login, setLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [ip, setIp] = useState('');
   const [currentView, setCurrentView] = useState(current_view);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -104,10 +105,9 @@ const AuthPage = ({ current_view }) => {
       })
         .then(response => {
           console.log(response);
-          if (response.status == 201) {
+          if (response.status === 201) {
             console.log('Account created successfully');
             setCurrentView('login');
-            <Navigate to="/login" replace />
           }
         })
         .catch(error => {
@@ -129,9 +129,9 @@ const AuthPage = ({ current_view }) => {
         .then(response => {
           console.log(response);
           if (response.status === 200) {
-            setLogin(true);
             localStorage.setItem('token', response.data.token);
-            <Navigate to="/home" replace />
+            navigate('/home', { replace: true });
+            console.log('Login successful');
           }
         })
         .catch(error => {
@@ -154,13 +154,20 @@ const AuthPage = ({ current_view }) => {
   };
 
   const changeView = view => {
+    console.log(view);
+    if (view === 'login')
+      navigate('/login', { replace: true });
+
+    else if (view === 'signup')
+      navigate('/signup', { replace: true });
+
     setUsername('');
     setEmail('');
     setPassword('');
     setErrorMessage('');
-    setLogin(false);
     setCurrentView(view);
   };
+
 
   const currentView_ = () => {
     switch (currentView) {
@@ -245,7 +252,7 @@ const AuthPage = ({ current_view }) => {
   };
 
 
-  return login ? <Navigate to="/home" /> : (
+  return (
     <section id="entry-page">
       {currentView_()}
     </section>

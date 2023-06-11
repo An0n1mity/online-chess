@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from './Navbar';
 import './HomePage.css';
-import ProfilePicture from "./profile_picture.svg";
+import Navbar from '../Navbar/Navbar';
+import ProfilePicture from "../images/profile_picture.svg";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -14,41 +14,24 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { Chessboard } from 'react-chessboard';
-import { backend_url } from './Url';
+import { backend_url } from '../Url';
+
+import { Navigate } from 'react-router';
 
 const getUserData = async (token) => {
-    try {
-		const response = await axios.get(backend_url + '/api/user_info', {
-	    headers: {
-		Authorization: `Token ${token}`
-	    }
-	});
-	return response.data;
-	} catch (error) {
-	    console.log(error);
-	}
-};
-
-const getChessStats = async (token) => {
 	try {
-		const response = await axios.get(backend_url + '/api/chess_stats', {
+		const response = await axios.get(backend_url + '/api/user_info', {
 			headers: {
 				Authorization: `Token ${token}`
 			}
 		});
 		return response.data;
 	} catch (error) {
-		// If code 401 Unhautorized remove token from local storage and redirect to login page
-		if (error.response && error.response.status === 401) {
-			localStorage.removeItem('token');
-			<Navigate to="/login" replace />
-		}
 		console.log(error);
 	}
 };
 
-
-const HomeBaseHeaderUserInfo = ({username, country}) => {
+const HomeBaseHeaderUserInfo = ({ username, country }) => {
 
 	const [status, setStatus] = useState(null);
 	// button to show status input field
@@ -103,9 +86,9 @@ const HomeBaseHeaderUserInfo = ({username, country}) => {
 	}
 
 
-    return (
-	<div className="home-base-header-user-info">
-	    <img className="home-base-header-user-info-profile-img" src={ProfilePicture} alt="user" />
+	return (
+		<div className="home-base-header-user-info">
+			<img className="home-base-header-user-info-profile-img" src={ProfilePicture} alt="user" />
 			<button className="home-base-header-user-info-edit-profile-img-button"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
 			<div className="home-base-header-user-info-block">
 				<div className="home-base-header-user-info-username-and-flag">
@@ -151,16 +134,6 @@ const HomeCompletedGames = () => {
 	const [selectedGameIndex, setSelectedGameIndex] = useState(0);
 	// Square color 
 	const [squareColor, setSquareColor] = useState(null);
-	const [swipeDirection, setSwipeDirection] = useState(null);
-	// Number of completed games 
-	const [numberOfGames, setNumberOfGames] = useState(0);
-	// Number of wins 
-	const [numberOfWins, setNumberOfWins] = useState(0);
-	// Number of draws 
-	const [numberOfDraws, setNumberOfDraws] = useState(0);
-	// Number of losses
-	const [numberOfLosses, setNumberOfLosses] = useState(0);
-
 
 	// Fetch completed games
 	useEffect(() => {
@@ -178,10 +151,6 @@ const HomeCompletedGames = () => {
 			}
 
 			setCompletedGames(response.data.games);
-			setNumberOfGames(response.data.number_of_games);
-			setNumberOfWins(response.data.number_of_wins);
-			setNumberOfDraws(response.data.number_of_draws);
-			setNumberOfLosses(response.data.number_of_losses);
 
 			// if no games are played, set the statistics of the last played chess game for testing purposes
 			if (response.data.games.length === 0) {
@@ -199,6 +168,8 @@ const HomeCompletedGames = () => {
 				case 3:
 					setPlayerBottom("Grandmaster Queen");
 					break;
+				default:
+					setPlayerBottom("Novice Knight");
 			}
 			// Set the color of the player and the opponent
 			if (response.data.games[0].color === 'w') {
@@ -250,6 +221,8 @@ const HomeCompletedGames = () => {
 			case 3:
 				setPlayerBottom("Grandmaster Queen");
 				break;
+			default:
+				setPlayerBottom("Novice Knight");
 		}
 		// Set the color of the player and the opponent
 		if (completedGames[index].color === 'w') {
@@ -277,21 +250,6 @@ const HomeCompletedGames = () => {
 		// Set date of the game
 		setDate(completedGames[index].start_time.slice(0, 10));
 	}
-
-	const handleSwipeLeft = () => {
-		setSwipeDirection('swipe-left');
-		setTimeout(() => {
-			setSwipeDirection(null);
-		}, 300); // Adjust the delay to match the transition duration
-	};
-
-	const handleSwipeRight = () => {
-		setSwipeDirection('swipe-right');
-		setTimeout(() => {
-			setSwipeDirection(null);
-		}, 300); // Adjust the delay to match the transition duration
-	};
-
 
 	const [showPopup, setShowPopup] = useState(false);
 	const [showPopup_, setShowPopup_] = useState(false);
@@ -348,7 +306,7 @@ const HomeCompletedGames = () => {
 			return;
 		}
 		// Delete game from database 
-		const reponse = axios.delete(backend_url + `/api/games/${completedGames[selectedGameIndex].id}/delete`, {
+		axios.delete(backend_url + `/api/games/${completedGames[selectedGameIndex].id}/delete`, {
 			headers: {
 				Authorization: `Token ${localStorage.getItem('token')}`
 			}
@@ -381,7 +339,7 @@ const HomeCompletedGames = () => {
 			<div className="home-completed-games-header">
 				<span className="home-completed-games-header-text">Completed Games</span>
 			</div>
-			<div className={`home-completed-games-table ${swipeDirection}`}>
+			<div className={`home-completed-games-table`}>
 				{(showPopup || showPopup_) ? gameCompletedPopup() : null}
 
 				<table>
@@ -510,38 +468,35 @@ const HomeBaseHeaderUserStatistics = () => {
 
 const HomeBase = () => {
 	const [userDataResponse, setUserData] = useState(null);
-	const [chessStatsResponse, setChessStats] = useState(null);
 
-    useEffect(() => {
-	const fetchData = async () => {
-	    const token = localStorage.getItem('token');
-		const userDataResponse = await getUserData(token);
-		const chessStatsResponse = await getChessStats(token);
-		setUserData(userDataResponse);
-		setChessStats(chessStatsResponse);
-	};
-	fetchData();
+	useEffect(() => {
+		const fetchData = async () => {
+			const token = localStorage.getItem('token');
+			const userDataResponse = await getUserData(token);
+			setUserData(userDataResponse);
+		};
+		fetchData();
 	}, []);
-	       return (
-	<div className="home-base-component">
-	    <header className="home-base-component-header">
-					   <HomeBaseHeaderUserInfo
-						   username={userDataResponse ? userDataResponse.username : "Loading..."}
-						   country={userDataResponse ? userDataResponse.country : "Loading..."}
-					   />
-					   <HomeCompletedGames />
-					   <HomeBaseHeaderUserStatistics />
-	    </header>
-	</div>
+	return (
+		<div className="home-base-component">
+			<header className="home-base-component-header">
+				<HomeBaseHeaderUserInfo
+					username={userDataResponse ? userDataResponse.username : "Loading..."}
+					country={userDataResponse ? userDataResponse.country : "Loading..."}
+				/>
+				<HomeCompletedGames />
+				<HomeBaseHeaderUserStatistics />
+			</header>
+		</div>
 	);
 };
 
 const Home = () => {
-    return (
-	<div className="home">
-	    <Navbar isAuthenticated={true} />
-	    <HomeBase />
-	</div>
+	return (
+		<div className="root">
+			<Navbar isAuthenticated={true} />
+			<HomeBase />
+		</div>
 	);
 };
 
