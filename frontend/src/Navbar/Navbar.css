@@ -64,6 +64,15 @@
 .navbar-buttons .signup-button {
   background-color: #383633;
   color: white;
+  width: 80%;
+  margin: auto;
+}
+
+.signup-button p,
+.login-button p{
+  margin: 0;
+  text-align: center;
+  width: 100%;
 }
 
 .link {
@@ -78,6 +87,8 @@
   background-color: #7fa650;
   box-shadow: 0 0 0 1px #7fa650;
   color: white;
+  width: 80%;
+  margin: auto;
 }
 
 .navbar-buttons .login-button:hover {

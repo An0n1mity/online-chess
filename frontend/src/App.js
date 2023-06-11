@@ -44,7 +44,7 @@ const GameRoute = () => {
 const App = () => {
 	return (
 		<Router>
-			<Suspense fallback={<div>Loading...</div>}>
+			<Suspense fallback={<div></div>}>
 				<Routes>
 					<Route path="/" element={<LandingRoute />} />
 					<Route path="/login" element={<LoginRoute />} />

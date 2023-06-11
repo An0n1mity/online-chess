@@ -35,20 +35,18 @@ const Navbar = ({ isAuthenticated }) => {
         </div>
         <div className="navbar-buttons">
           <React.Fragment>
-            <li>
               <Link className='link' to="/home">
                 <button className="home-button">
                   <FontAwesomeIcon className='button-img' icon={faHouse} beat />
                   {isMenuOpen ? <p className='button-text'>Home</p> : ''}
                 </button>
               </Link>
-              <Link className='link' to="/bots">
+            <Link className='link' to="/bots">
                 <button className="play-button">
                   <img className="button-img" src={require("../images/play-hand.png")} alt="play" />
                   {isMenuOpen ? <p className='button-text'>Play</p> : ''}
                 </button>
-              </Link>
-            </li>
+            </Link>
           </React.Fragment>
           {isAuthenticated ? (
             <>
@@ -56,13 +54,13 @@ const Navbar = ({ isAuthenticated }) => {
           ) : (
             <React.Fragment>
               <li>
-                <Link className='signup-link' to="/signup">
-                  <button className="signup-button">Sign Up</button>
+                  <Link className='link' to="/signup">
+                    <button className="signup-button"><p>Sign Up</p></button>
                 </Link>
               </li>
               <li>
-                <Link className='login-link' to="/login">
-                  <button className="login-button">Log In</button>
+                  <Link className='link' to="/login">
+                    <button className="login-button"><p>Log In</p></button>
                 </Link>
               </li>
             </React.Fragment>

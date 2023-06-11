@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db import transaction
 from .models import ChessGame, ChessGameStatistics
 import time
+from django.shortcuts import get_object_or_404
 
 @shared_task
 def update_player_remaining_time(game_id):

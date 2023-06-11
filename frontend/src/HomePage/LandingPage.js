@@ -67,7 +67,7 @@ const OnlineGameBlock = () => {
 			<div className="online-game-block-info">
 				<h1 className="online-game-block-info-title">Play Chess <br />Online !</h1>
 				<div className="online-game-block-info-buttons">
-					<Link to="/play" style={{ textDecoration: 'none' }}>
+					<Link to="/" style={{ textDecoration: 'none' }}>
 						<button className="online-game-block-info-buttons-play-online">
 							<div className="online-game-block-info-buttons-play-online-img">
 								<icon className="online-game-block-info-online-icon">🌍</icon>

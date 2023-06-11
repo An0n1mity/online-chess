@@ -383,7 +383,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_lost += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -403,7 +403,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -417,7 +417,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -452,7 +452,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -472,7 +472,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_lost += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -486,7 +486,7 @@ class ChessGameMoveAPIView(APIView):
                     # Update statistics 
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_drawn += 1
-                    statstics.games_played += 1
+                    statistics.games_played += 1
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
