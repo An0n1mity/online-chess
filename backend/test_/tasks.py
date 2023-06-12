@@ -3,6 +3,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import ChessGame, ChessGameStatistics
+import time 
 
 @shared_task
 def update_player_remaining_time(game_id):

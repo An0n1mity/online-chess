@@ -352,8 +352,11 @@ class ChessGameMoveAPIView(APIView):
 
             from_square = request.data.get('from')
             to_square = request.data.get('to')
-            move = chess.Move.from_uci(from_square + to_square)
-
+            try:
+                move = chess.Move.from_uci(from_square + to_square)
+            except:
+                pass
+            
             from django.utils.timezone import make_aware
             # Check if the move is legal and if it is the player's turn
             if move in list(board.legal_moves) and current_turn == player_turn:
@@ -384,6 +387,7 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_lost += 1
                     statistics.games_played += 1
+                    statistics.save()        
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -404,6 +408,7 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
                     statistics.games_played += 1
+                    statistics.save()        
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -418,7 +423,8 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
                     statistics.games_played += 1
-
+                    statistics.save()        
+            
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
                 bot_move = get_bot_move(game.state, game.bot_difficulty)
@@ -437,7 +443,6 @@ class ChessGameMoveAPIView(APIView):
                 # Update the bot remaining time
                 game.bot_remaining_time -= time_difference
                 game.last_move_time += time_difference
-                print(game.player_remaining_time)
 
 
                 # if the bot runs out of time, the game is over
@@ -453,6 +458,7 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_won += 1
                     statistics.games_played += 1
+                    statistics.save()
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -473,6 +479,7 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_lost += 1
                     statistics.games_played += 1
+                    statistics.save()
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
@@ -487,6 +494,7 @@ class ChessGameMoveAPIView(APIView):
                     statistics = get_object_or_404(ChessGameStatistics, user=user)
                     statistics.games_drawn += 1
                     statistics.games_played += 1
+                    statistics.save()
 
                     return Response({'status': 'legal', 'state': game.state, 'player_remaining_time': game.player_remaining_time, 'bot_remaining_time': game.bot_remaining_time})
 
