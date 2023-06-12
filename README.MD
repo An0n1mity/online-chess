@@ -67,3 +67,6 @@ docker-compose up
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.MD) file for details.
 
+## Citation
+[![CITATION.cff](https://img.shields.io/badge/Citation-CFF-ff69b4.svg)](https://github.com/official-stockfish/Stockfish/blob/master/CITATION.cff)
+
