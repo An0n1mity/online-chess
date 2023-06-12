@@ -1,5 +1,9 @@
 # Online chess project
 
+![Landing Page](landing_screenshot.png)
+![Game Page](game_screenshot.png)
+
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
