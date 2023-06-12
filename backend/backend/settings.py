@@ -27,36 +27,56 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1',
+    '46.101.210.155',
+    'onlinechessproject.games'
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost',
+    'http://localhost:80',  # for localhost (REACT Default)
+    'http://46.101.210.155',
+    'http://46.101.210.155:80',
+    'https://onlinechessproject.games',
+    'https://onlinechessproject.games:80'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost',
+    'http://localhost:80',  # for localhost (REACT Default)
+    'http://46.101.210.155',
+    'http://46.101.210.155:80',
+    "https://onlinechessproject.games"
+]
 
 # Application definition
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_PRIVATE_NETWORKS = True
+
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'corsheaders',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_',
-    'corsheaders',
+    'rest_framework',
     'rest_framework.authtoken',
     'django_extensions',
-    'channels',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -77,8 +97,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -89,12 +107,21 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
+"""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",P
+        "NAME": "onlinechess",
+        "USER": "root",
+        "PASSWORD": "root",
+        "HOST": "db",  # set in docker-compose.yml
+        "PORT": 5432,  # default postgres port
+    }
+}
+"""
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'test_.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -133,23 +160,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (       "http://localhost:3000", 
-                                "http://127.0.0.1:3000",
-                                "http://localhost:8000", 
-                                "http://127.0.0.1:8000",
-                         )
-CSRF_TRUSTED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000", 
-        "http://127.0.0.1:8000",
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
 ]
+# Authentication user model
+AUTH_USER_MODEL = 'test_.User'
+
 
 # REST FRAMEWORK
 REST_FRAMEWORK = {
-        # Any view that uses DRF will automatically use the DjangoFilterBackend to filter the queryset
-        # Any view that uses DRF will automatically use JSON Web Tokens (JWT) for authentication. This allows the API to verify the authenticity of requests and ensures that only authorized users can access the protected resources
         'DEFAULT_AUTHENTICATION_CLASSES': [
             'rest_framework.authentication.TokenAuthentication',
             ],
@@ -159,12 +180,14 @@ REST_FRAMEWORK = {
         }
 
 GEOIP_PATH = BASE_DIR / 'backend/geoip/GeoLite2-Country.mmdb'
-print(GEOIP_PATH)
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
+import os
 # Celery conf
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+#CELERY_BROKER_URL = 'redis://redis:6379/0'
+#CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = os.environ.get("BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("RESULT_BACKEND", "redis://localhost:6379/0")
 
 
 CELERY_BEAT_SCHEDULE = {

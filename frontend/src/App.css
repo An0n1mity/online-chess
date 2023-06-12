@@ -2,6 +2,17 @@
  
 }
 
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background: url("images/signup-background.png");
+  background-color: #312e2b;
+  background-position: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,9 +46,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-body{
-    background-color: #26211b;
-    font-family: 'Montserrat', sans-serif;
 }

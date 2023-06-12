@@ -1,0 +1,365 @@
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.root{
+  display: flex;
+  height: 100vh;
+}
+
+.home-base-component {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #312e2b;
+  justify-content: space-between;
+}
+
+.home-base-component-header {
+  margin-top: 3rem;
+  width: 100%;
+}
+
+.home-base-header-user-info {
+  display: flex;
+  column-gap: 1rem;
+  width: 648px;
+  height: 160px;
+    background-color: #272522;
+    padding: 3%;
+    border-radius: 10px;
+    margin-left: 3rem;
+}
+
+.home-base-header-user-info-profile-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 10px;
+}
+
+.home-base-header-user-info-edit-profile-img-button {
+  position: absolute;
+}
+
+.home-base-header-user-info-username-and-flag {
+  display: flex;
+  width: 480px;
+  height: 34px;
+}
+
+.home-base-header-user-info-username {
+  color: #fff;
+  width: fit-content;
+  height: 34px;
+  margin-top: 0%;
+}
+
+.home-base-header-user-info-flag {
+  width: 32px;
+  height: 32px;
+    margin-top: 1%;
+    margin-left: 3%;
+  }
+  
+  .home-base-header-user-info-status {
+    display: flex;
+    color: #fff;
+    width: 460px;
+    height: 30px;
+    margin-top: 3%;
+  }
+  
+  .home-base-header-user-info-status-text {
+    margin-right: 2%;
+    width: auto;
+    height: 100%;
+    margin-top: 0%;
+}
+
+.home-chess-stats {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.home-chess-stats p {
+  margin-bottom: 1rem;
+}
+
+.home-completed-games {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+    max-width: 728px;
+  background-color: #272522;
+  margin-top: 50px;
+  border-radius: 10px;
+  margin-left: 3rem;
+}
+
+.home-completed-games-header {
+  display: flex;
+  flex-direction: row;
+  background-color: #272522;
+  width: 100%;
+  padding-bottom: 5px;
+}
+
+.home-completed-games-header-text {
+  color: #dedede;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
+
+.home-completed-games-selection-index {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  overflow: hidden;
+}
+
+.home-completed-games-table {
+  width: 100%;
+  height: 100%;
+  background-color: #269768;
+}
+
+.home-completed-games-table table {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.home-completed-games-table table th {
+  background-color: #1f1e1b;
+  color: #797977;
+  font-size: 1.2rem;
+  font-weight: 600;
+  height: 38px;
+  list-style: 1.3;
+}
+
+.home-completed-games-table table td {
+  background-color: #272522;
+  color: #bebebd;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.home-completed-games-table-row:hover td {
+  background-color: #1f1e1b;
+}
+
+.home-completed-games-table-row.active td {
+  background-color: #1f1e1b;
+}
+
+.home-completed-games-table-players {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-completed-games-table-result {
+  display: flex;
+  flex-direction: row;
+}
+
+.home-completed-games-table-results {
+  width: 50%;
+}
+
+.home-completed-games-table-result-icon {
+  width: 50%;
+  /* Centering the icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-completed-games-table-player-icon-top,
+.home-completed-games-table-player-icon-bottom {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.home-completed-games-table-player-top,
+.home-completed-games-table-player-bottom {
+  display: flex;
+}
+
+.home-completed-games-selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.home-completed-games-selection-left,
+.home-completed-games-selection-right,
+.home-completed-games-selection-view {
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+}
+
+.home-completed-games-selection-number-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.3rem;
+  width: 100px;
+}
+
+.home-completed-games-selection-number {
+  color: #787876;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+}
+
+.home-completed-games-selection-number.active {
+  color: #fff;
+}
+
+.home-completed-games-selection-left:hover,
+.home-completed-games-selection-right:hover,
+.home-completed-games-selection-number:hover,
+.home-completed-games-selection-view:hover {
+  cursor: pointer;
+}
+
+.home-completed-games-popup {
+  position: absolute;
+  width: 500px;
+  z-index: 10;
+  margin-left: 800px;
+  top: 100px;
+}
+
+.home-completed-games-selection-trash {
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+.home-base-header-user-statistics {
+  height: auto;
+  width: 100%;
+  max-width: 728px;
+  margin-top: 25px;
+  margin-left: 3rem;
+}
+
+.home-base-header-user-statistics-table {
+  width: 100%;
+}
+
+.home-base-header-user-statistics-table th {
+  background-color: #1f1e1b;
+  color: #bebebd;
+  font-size: 1.2rem;
+  font-weight: 600;
+  height: 38px;
+  list-style: 1.3;
+}
+
+.home-base-header-user-statistics-table td {
+  background-color: #272522;
+  color: #bebebd;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  height: 38px;
+}
+
+.td-w-d-l {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+}
+
+.td-w-d-l p {
+  height: 100%;
+  margin-top: 0.5rem;
+}
+
+#wins {
+  color: #269768;
+}
+
+#draws {
+  color: #797977;
+}
+
+#losses {
+  color: #d9534f;
+}
+
+/* Responsive adjustments */
+
+@media only screen and (max-width: 768px) {
+  .home-base-header-user-info {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    width: auto;
+  }
+
+
+  .home-base-header-user-info-profile-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .home-base-header-user-info-username-and-flag {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .home-base-header-user-info-username {
+    margin-top: 1rem;
+  }
+
+  .home-base-header-user-info-flag {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+
+  .home-base-header-user-info-status {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    width: 50%;
+    margin: auto;
+  }
+
+
+  .home-base-header-user-info-status-text {
+    margin-top: 1rem;
+  }
+
+  .home-chess-stats {
+    margin-top: 1.5rem;
+  }
+
+  .home-completed-games,
+  .home-base-header-user-statistics {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .home-completed-games-table-result-icon,
+  .home-completed-games-table-player-icon-top,
+  .home-completed-games-table-player-icon-bottom {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+}

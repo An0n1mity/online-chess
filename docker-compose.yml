@@ -1,38 +1,36 @@
 version: '3'
 services:
   django:
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     build:
+      dockerfile: Dockerfile.prod
       context: ./backend # Path to the Django project directory
+      # dockerfile: Dockerfile.dev
     ports:
       - 8000:8000
-    depends_on:
-      - react
-      - redis
     networks:
       - app-network
+    depends_on:
+      - redis
 
   react:
     build:
+      #ockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
       context: ./frontend  # Path to the React project directory
     ports:
+      #- 80:80
+      #- 443:443
       - 3000:3000
     networks:
       - app-network
+    volumes:
+      - './frontend/src:/frontend/src'
 
   redis:
-    image: redis:latest
-    ports:
-      - 6379:6379
-    networks:
-      - app-network
-
-  celery:
-    build:
-      context: ./backend  # Path to the Django project directory
-    command: celery -A backend worker -l INFO
-    depends_on:
-      - django
-      - redis
+    image: redis:alpine
     networks:
       - app-network
 
