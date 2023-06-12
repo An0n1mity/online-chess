@@ -68,5 +68,4 @@ docker-compose up
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.MD) file for details.
 
 ## Stockfish
-[![CITATION.cff](https://img.shields.io/badge/Citation-CFF-ff69b4.svg)]([(https://github.com/official-stockfish/Stockfish/)]
-
+https://github.com/official-stockfish/Stockfish
