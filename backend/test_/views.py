@@ -297,7 +297,7 @@ def get_bot_move(fen, difficulty):
         result = easy_bot.play(board, chess.engine.Limit(depth=3, nodes=10))
 
     elif difficulty == 3:
-        result = easy_bot.play(board, chess.engine.Limit)
+        result = easy_bot.play(board, chess.engine.Limit(depth=5, nodes=100))
 
     # wait a certain amount of time following a uniform distribution
     time.sleep(random.uniform(1, 7))

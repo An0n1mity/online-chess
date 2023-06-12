@@ -17,13 +17,13 @@ services:
 
   react:
     build:
-      #ockerfile: Dockerfile.prod
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
+      #dockerfile: Dockerfile.dev
       context: ./frontend  # Path to the React project directory
     ports:
-      #- 80:80
-      #- 443:443
-      - 3000:3000
+      - 80:80
+      - 443:443
+      #- 3000:3000
     networks:
       - app-network
     volumes:
