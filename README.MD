@@ -1,4 +1,3 @@
----
 # Online chess project
 
 ## Table of Contents
@@ -23,13 +22,13 @@ These instructions will guide you on how to get a copy of the project up and run
 1. Clone the repository:
 
 ```shell
-git clone [repository URL]
+git clone https://github.com/An0n1mity/online-chess
 ```
 
 2. Navigate to the project directory:
 
 ```shell
-cd [project directory]
+cd online-chess
 ```
 
 3. Build the Docker containers:
@@ -59,4 +58,3 @@ docker-compose up
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
----
