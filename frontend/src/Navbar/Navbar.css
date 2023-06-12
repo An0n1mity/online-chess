@@ -48,7 +48,7 @@
   width: 100%;
   text-align: center;
   cursor: pointer;
-  jusify-content: center;
+  justify-content: center;
 }
 
 .navbar-buttons button:hover {
@@ -66,6 +66,7 @@
   color: white;
   width: 80%;
   margin: auto;
+  margin-bottom: 10%;
 }
 
 .signup-button p,
@@ -99,3 +100,23 @@
   margin-top: 8%;
 }
 
+/* Add this media query to modify navbar styles for small screens */
+@media screen and (max-width: 750px) {
+  .navbar {
+    top: 0;
+    left: 0;
+    background-color: #272522;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 50px 1fr 50px;
+    transition: width 0.1s ease-in-out;
+    height: 100vh;
+    position: fixed;
+    z-index: 9999;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+}

@@ -5,66 +5,77 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
 import './Navbar.css';
+import { useEffect } from 'react';
 
 const Navbar = ({ isAuthenticated }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen2, setIsMenuOpen2] = useState(true);    
 
   const toggleMenu = () => {
     console.log("toggleMenu");
 
     const navbar = document.querySelector('.navbar');
     if (!isMenuOpen) {
-      navbar.style.width = '10%';
+      // If window size is less than 600px, set width to 100%
+      if (window.innerWidth < 750)
+        navbar.style.width = '100%';
+
+      else
+        navbar.style.width = '10%';
+      navbar.style.backgroundColor = '#272522';
+
+
     } else {
-      navbar.style.width = '5%';
+      if (window.innerWidth < 750) {
+        navbar.style.width = '10%';
+        navbar.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      }
+      else
+        navbar.style.width = '5%';
+
     }
 
     setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen2(!isMenuOpen2);
+    console.log('toggleMenu');
   };
 
+  useEffect(() => {
+    toggleMenu();
+  }, []);
+
   return (
-    <nav className="navbar" style={{ width: '10%' }}>
+    <nav className="navbar">
       <button className="navbar-toggle" onClick={toggleMenu}>
         <FontAwesomeIcon icon={isMenuOpen ? faCaretLeft : faCaretRight} />
       </button>
       <div className="navbar-container">
         <div className="navbar-logo">
           <Link to="/">
-            <img className="logo-img" src={require('../images/logo.jpg')} alt="logo" />
+            <img className={`logo-img ${isMenuOpen2 ? '' : 'hidden'}`} src={require('../images/logo.jpg')} alt="logo" />
           </Link>
         </div>
         <div className="navbar-buttons">
           <React.Fragment>
-              <Link className='link' to="/home">
+            <Link className={`link ${isMenuOpen2 ? '' : 'hidden'}`} to="/home" >
                 <button className="home-button">
                   <FontAwesomeIcon className='button-img' icon={faHouse} beat />
                   {isMenuOpen ? <p className='button-text'>Home</p> : ''}
                 </button>
               </Link>
-            <Link className='link' to="/bots">
+            <Link className={`link ${isMenuOpen2 ? '' : 'hidden'}`} to="/bots">
                 <button className="play-button">
                   <img className="button-img" src={require("../images/play-hand.png")} alt="play" />
                   {isMenuOpen ? <p className='button-text'>Play</p> : ''}
                 </button>
             </Link>
-          </React.Fragment>
-          {isAuthenticated ? (
-            <>
-            </>
-          ) : (
-            <React.Fragment>
-              <li>
-                  <Link className='link' to="/signup">
+                <Link className={`link ${isMenuOpen2 ? '' : 'hidden'}`} to="/signup">
                     <button className="signup-button"><p>Sign Up</p></button>
                 </Link>
-              </li>
-              <li>
-                  <Link className='link' to="/login">
+                <Link className={`link ${isMenuOpen2 ? '' : 'hidden'}`} to="/login">
                     <button className="login-button"><p>Log In</p></button>
                 </Link>
-              </li>
             </React.Fragment>
-          )}
         </div>
       </div>
     </nav >

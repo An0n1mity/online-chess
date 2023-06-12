@@ -21,9 +21,9 @@ function BoardRandomMoving() {
 		const result = gameCopy.move(move);
 		setGame(gameCopy);
 		if (result.captured) {
-			takeSound.play();
+			//takeSound.play();
 		} else {
-			dropSound.play();
+			//dropSound.play();
 		}
 		return result; // null if the move was illegal, the move object if the move was legal
 	}
@@ -31,7 +31,7 @@ function BoardRandomMoving() {
 	function makeRandomMove() {
 		const possibleMoves = game.moves();
 		if (game.game_over() || game.in_draw() || possibleMoves.length === 0) {
-			endSound.play();
+			//endSound.play();
 			setGame(new Chess()); // Reset the game
 			return; // Exit if the game is over
 		}

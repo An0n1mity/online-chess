@@ -97,29 +97,9 @@ const Stats = (props) => {
     useEffect(() => {
         let timer = null;
 
-        const fetchRemainingTime = async () => {
-            try {
-                const response = await axios.get(backend_url + `/api/game/${gameId}/state`, {
-                    headers: {
-                        Authorization: `Token ${localStorage.getItem('token')}`,
-                    },
-                });
-                const data = response.data;
-                console.log(data);
-                if (type === 'player') {
-                    setRemainingTime(time_seconds_to_date(data.player_remaining_time));
-                } else {
-                    setRemainingTime(time_seconds_to_date(data.bot_remaining_time));
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
         if (!props.stopClock && !props.gameOver) {
 
             timer = setInterval(() => {
-                fetchRemainingTime();
                 const time = new Date(remainingTime.getTime() - 1000);
                 setRemainingTime(time);
 
@@ -141,6 +121,28 @@ const Stats = (props) => {
         };
 
     }, [props.stopClock, remainingTime]);
+
+    useEffect(() => {
+        const fetchRemainingTime = async () => {
+            try {
+                const response = await axios.get(backend_url + `/api/game/${gameId}/state`, {
+                    headers: {
+                        Authorization: `Token ${localStorage.getItem('token')}`,
+                    },
+                });
+                const data = response.data;
+                console.log(data);
+                if (type === 'player') {
+                    setRemainingTime(time_seconds_to_date(data.player_remaining_time));
+                } else {
+                    setRemainingTime(time_seconds_to_date(data.bot_remaining_time));
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchRemainingTime();
+    }, [props.remainingTime]);
 
     return (
         <div
