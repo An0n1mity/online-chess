@@ -69,6 +69,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.MD
 
 ## Stockfish
 https://github.com/official-stockfish/Stockfish
-
-## Project owner 
-Monthouël Alexandre :)
