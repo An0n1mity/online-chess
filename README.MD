@@ -5,7 +5,7 @@
 
 # Disclaimer :warning:
 
-It's my first doing a web app project, and god knows that doing a full stack have with 0 knowledges is really hard.
+It's my first time doing a web app project, and god knows that doing a full stack app have with 0 knowledges is really hard.
 The project is still under development, features can be messed up sometimes, but hey it was built for experimentations
 with web technolgies :smile:
 
